@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Пошук, сортування, агрегація</title>
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<main>
+
+<a class="back-link" href="index.html">← Усі уроки</a>
+<p class="eyebrow">Kotlin Collections · Урок 5 з 9</p>
+<h1>Пошук, сортування, агрегація</h1>
+
+<div class="callout callout--known">
+  <span class="callout-label">Що ви вже знаєте</span>
+  <p>З уроку 4: <code>map</code> і <code>filter</code> перетворюють колекцію в іншу колекцію. Зараз розберемо функції, які впорядковують елементи або "стискають" колекцію в одне число чи одну мапу.</p>
+</div>
+
+<h2>Сортування</h2>
+
+<pre><code>data class Student(val name: String, val grade: Int)
+
+val students = listOf(
+    Student("Оля", 92),
+    Student("Максим", 78),
+    Student("Ірина", 92)
+)
+
+students.sortedBy { it.grade }            // зростання: Максим, Оля, Ірина
+students.sortedByDescending { it.grade }  // спадання: Оля, Ірина, Максим
+</code></pre>
+
+<p>Обидві функції повертають <strong>новий</strong> список — оригінальний <code>students</code> не змінюється, навіть якщо він <code>MutableList</code>.</p>
+
+<h2>Агрегація: одне число з усієї колекції</h2>
+
+<pre><code>val grades = listOf(92, 78, 92, 65)
+
+grades.count { it >= 80 }    // 2
+grades.sum()                  // 327
+grades.average()              // 81.75
+grades.maxOrNull()            // 92
+grades.minOrNull()            // 65
+
+students.maxByOrNull { it.grade }  // Student("Оля", 92) — перший з максимальних
+</code></pre>
+
+<div class="callout callout--pitfall">
+  <span class="callout-label">Типова пастка</span>
+  <p><code>maxOrNull()</code>/<code>minOrNull()</code> повертають <code>null</code> для порожньої колекції — саме тому в назві "OrNull". Старі функції <code>max()</code>/<code>min()</code> без цього суфікса у сучасному Kotlin прибрані з stdlib якраз через те, що кидали незрозумілий виняток на порожній колекції.</p>
+</div>
+
+<h2>groupBy — розкласти по категоріях</h2>
+
+<pre><code>val byGrade = students.groupBy { it.grade }
+// Map&lt;Int, List&lt;Student&gt;&gt;:
+// 92 -> [Student("Оля", 92), Student("Ірина", 92)]
+// 78 -> [Student("Максим", 78)]
+</code></pre>
+
+<p><code>groupBy</code> завжди повертає <code>Map</code>, де ключ — результат лямбди, а значення — список усіх елементів з таким результатом. Це протилежність до <code>map</code>: <code>map</code> зберігає розмір, <code>groupBy</code> перегруповує.</p>
+
+<div class="quiz" data-correct="A">
+  <p class="quiz-q">Що поверне <code>listOf(3, 1, 2).sortedBy { it }</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>[1, 2, 3]</code></button>
+    <button class="quiz-option" data-choice="B"><code>[3, 2, 1]</code></button>
+    <button class="quiz-option" data-choice="C"><code>[3, 1, 2]</code></button>
+    <button class="quiz-option" data-choice="D">виняток</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — sortedBy сортує за зростанням значення, яке повертає лямбда." data-wrong="Ні. sortedBy без Descending завжди йде за зростанням."></p>
+</div>
+
+<div class="quiz" data-correct="C">
+  <p class="quiz-q">Якого типу буде результат <code>listOf(1, 2, 3, 4).groupBy { it % 2 }</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>List&lt;Int&gt;</code></button>
+    <button class="quiz-option" data-choice="B"><code>Set&lt;Int&gt;</code></button>
+    <button class="quiz-option" data-choice="C"><code>Map&lt;Int, List&lt;Int&gt;&gt;</code></button>
+    <button class="quiz-option" data-choice="D"><code>Int</code></button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — groupBy завжди повертає мапу 'ключ -> список елементів з цим ключем'." data-wrong="Ні. groupBy — це не map і не filter, вона повертає саме Map."></p>
+</div>
+
+<div class="callout callout--source">
+  <span class="callout-label">Головне джерело</span>
+  <p><a href="https://kotlinlang.org/docs/collection-aggregate.html" target="_blank" rel="noopener">Kotlin Docs: Aggregate operations</a> та <a href="https://kotlinlang.org/docs/collection-grouping.html" target="_blank" rel="noopener">Grouping</a>. Приклад groupBy у контексті мап: <a href="https://typealias.com/start/kotlin-maps/" target="_blank" rel="noopener">typealias.com — Collections: Maps</a>.</p>
+</div>
+
+<div class="callout callout--ask">
+  <span class="callout-label">Застрягли?</span>
+  <p>Тип результату <code>groupBy</code> (<code>Map&lt;K, List&lt;V&gt;&gt;</code>) плутає багатьох новачків. Якщо компілятор скаржиться на тип після <code>groupBy</code> — покажіть повідомлення про помилку викладачу/агенту.</p>
+</div>
+
+<div class="lesson-nav">
+  <a href="0004-funktsionalni-operatsii-1.html">← map, filter, forEach</a>
+  <a href="index.html">Усі уроки</a>
+  <a href="0006-prosunuti-transformatsii.html">Наступний: fold, reduce, flatMap, zip →</a>
+</div>
+
+</main>
+<script src="../../../assets/quiz.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 3: Default та named аргументи</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Функції» · Урок 3 з 8 · ~6 хв</p>
+  <h1>Значення за замовчуванням та іменовані аргументи</h1>
+  <p class="subtitle">Як уникнути купи перевантажених версій однієї функції.</p>
+</header>
+
+<h2>1. Значення за замовчуванням</h2>
+<p>Параметр можна забезпечити значенням «на випадок, якщо його не передадуть»:</p>
+<pre><code>fun greet(name: String, greeting: String = "Привіт") {
+    println("$greeting, $name!")
+}
+
+greet("Олена")                    // Привіт, Олена!
+greet("Олена", "Доброго ранку")   // Доброго ранку, Олена!</code></pre>
+<div class="callout">Це заміняє перевантаження функцій (overloading) з інших мов — одна функція замість кількох варіантів з різною кількістю параметрів.</div>
+
+<div class="quiz" data-answer="1">
+  <div class="q">Скільки разів довелось би оголошувати перевантажену (overload) версію функції <code>greet</code> без default-параметра, щоб підтримати виклик і з привітанням, і без нього?</div>
+  <input type="text" placeholder="число">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>2. Іменовані аргументи</h2>
+<p>При виклику можна вказати ім'я параметра — тоді порядок не має значення, і можна пропустити будь-які default-параметри:</p>
+<pre><code>fun reformat(
+    str: String,
+    normalizeCase: Boolean = true,
+    wordSeparator: Char = ' ',
+) { /* ... */ }
+
+reformat("String!", wordSeparator = '_')</code></pre>
+<div class="warn">Правило: якщо один аргумент переданий іменовано, всі наступні за ним теж мають бути іменовані.</div>
+
+<div class="quiz" data-answer="ні">
+  <div class="q">Чи можна написати виклик <code>reformat(wordSeparator = '_', "String!")</code> — тобто спершу іменований, а потім позиційний аргумент? (так/ні)</div>
+  <input type="text" placeholder="так або ні">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>3. Практика</h2>
+<div class="callout">
+Напишіть функцію <code>fun power(base: Int, exponent: Int = 2): Int</code>, яка повертає <code>base</code> у степені <code>exponent</code> (циклом <code>for</code> — ви це вже вмієте). Викличте її двома способами: <code>power(5)</code> і <code>power(2, exponent = 10)</code>.
+</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+<p>Допишіть у <code>main</code> виклик <code>power</code> з практичного завдання вище і перевірте результат.</p>
+<div class="playground-embed"><iframe src="https://pl.kotl.in/45I6RZXz4" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/45I6RZXz4" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<h2>Довідка</h2>
+<p>Повний синтаксис і глосарій — у довіднику <a href="../reference/0001-funktsii-kotlin.html">«Функції в Kotlin — шпаргалка»</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0002-funktsii-virazy.html">← Попередній урок</a> · <a href="0004-vararg.html">Наступний урок: Vararg →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

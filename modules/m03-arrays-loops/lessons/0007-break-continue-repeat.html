@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 7: break, continue, мітки та repeat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Цикли та масиви» · Урок 7 з 13 · ~8 хв</p>
+  <h1>break, continue, мітки та repeat</h1>
+  <p class="subtitle">Керування ходом циклу та найпростіше повторення.</p>
+</header>
+
+<h2>1. break і continue</h2>
+
+<ul>
+  <li><code>break</code> — негайно завершує <strong>найближчий</strong> цикл;</li>
+  <li><code>continue</code> — пропускає решту тіла й переходить до наступної ітерації.</li>
+</ul>
+
+<pre><code>for (i in 1..10) {
+    if (i % 2 == 0) continue    // парні пропускаємо
+    if (i &gt; 7) break            // зупиняємось після 7
+    print("$i ")                // 1 3 5 7
+}</code></pre>
+
+<p>Часта схема — «нескінченний» цикл із виходом всередині:</p>
+
+<pre><code>var attempts = 0
+while (true) {
+    attempts++
+    if (attempts == 3) break
+}
+println(attempts)   // 3</code></pre>
+
+<div class="quiz" data-answer="12">
+  <div class="q">Що надрукує <code>for (i in 1..5) { if (i == 3) break; print(i) }</code>? Введіть лише цифри без пробілів.</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>2. Мітки: вихід з вкладених циклів</h2>
+
+<p><code>break</code> у внутрішньому циклі виходить лише з нього. Щоб завершити зовнішній, ставимо на цикл мітку <code>ім’я@</code> і пишемо <code>break@ім’я</code>:</p>
+
+<pre><code>outer@ for (i in 1..9) {
+    for (j in 1..9) {
+        if (i * j == 12) {
+            println("Знайдено: $i * $j = 12")
+            break@outer          // виходимо з обох циклів
+        }
+    }
+}</code></pre>
+
+<p>Аналогічно <code>continue@outer</code> переходить до наступної ітерації <strong>зовнішнього</strong> циклу.</p>
+
+<div class="quiz" data-answer="6">
+  <div class="q">Скільки разів виконається <code>print</code> у <code>for (i in 1..3) { for (j in 1..3) { if (j == 2) continue; print("x") } }</code>?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>3. repeat(n)</h2>
+
+<p>Коли потрібно просто виконати блок <code>n</code> разів і лічильник не потрібен, зручна функція <code>repeat</code>:</p>
+
+<pre><code>repeat(3) {
+    println("Привіт!")
+}
+
+repeat(3) { index -&gt;
+    println("Повтор №$index")    // 0, 1, 2
+}</code></pre>
+
+<p>Блок у фігурних дужках — це <a href="../../../glossary/index.html#lambda">лямбда</a>, що передається функції <a href="../../../glossary/index.html#higher-order-function">вищого порядку</a> <code>repeat</code>; докладно — у модулі «Функції». Через це <code>break</code> та <code>continue</code> у <code>repeat</code> не використовують: потрібен вихід — беріть <code>for</code> або <code>while</code>.</p>
+
+<h2>4. Підсумок: який цикл обрати</h2>
+
+<table>
+  <tr><th>Задача</th><th>Інструмент</th></tr>
+  <tr><td>повторити N разів, лічильник не потрібен</td><td><code>repeat(n) { }</code></td></tr>
+  <tr><td>пройти діапазон чи індекси</td><td><code>for (i in …)</code></td></tr>
+  <tr><td>пройти значення масиву</td><td><code>for (x in arr)</code></td></tr>
+  <tr><td>доки умова істинна</td><td><code>while</code></td></tr>
+  <tr><td>принаймні один раз, потім доки умова</td><td><code>do-while</code></td></tr>
+  <tr><td>вийти з вкладених циклів</td><td>мітка + <code>break@мітка</code></td></tr>
+</table>
+
+<h2>5. Практика</h2>
+
+<div class="callout">Знайдіть у матриці 3×3 з довільними числами перший елемент, більший за <code>10</code>. Виведіть його рядок і стовпець та зупиніть обидва цикли за допомогою мітки.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-embed"><iframe src="https://pl.kotl.in/OJDaI76I1?theme=darcula" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/OJDaI76I1?theme=darcula" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0002-diapazony-ta-tsykly.html">«Діапазони та цикли — шпаргалка»</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0006-while-do-while.html">← Попередній урок</a> · <a href="0008-linijnyj-poshuk-pidrakhunok.html">Наступний урок: Лінійний пошук, підрахунок, сума, мінімум →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

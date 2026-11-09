@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kotlin Collections — Шпаргалка</title>
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<main>
+
+<a class="back-link" href="../lessons/index.html">← Усі уроки</a>
+<p class="eyebrow">Довідник</p>
+<h1>Шпаргалка: синтаксис колекцій</h1>
+<p>Компресована суть курсу для швидкого пошуку під час написання коду. Деталі та пояснення — у відповідних уроках.</p>
+
+<h2>Створення</h2>
+<table>
+<tr><th>Тип</th><th>Read-only</th><th>Mutable</th></tr>
+<tr><td>List</td><td><code>listOf(1, 2, 3)</code></td><td><code>mutableListOf(1, 2, 3)</code></td></tr>
+<tr><td>Set</td><td><code>setOf(1, 2, 3)</code></td><td><code>mutableSetOf(1, 2, 3)</code></td></tr>
+<tr><td>Map</td><td><code>mapOf("a" to 1)</code></td><td><code>mutableMapOf("a" to 1)</code></td></tr>
+<tr><td>Порожня</td><td><code>emptyList()</code> / <code>emptySet()</code> / <code>emptyMap()</code></td><td>—</td></tr>
+<tr><td>Builder</td><td><code>buildList { add(1) }</code></td><td><code>buildMap { put("a", 1) }</code>, <code>buildSet { add(1) }</code></td></tr>
+</table>
+<p class="topic">→ Урок <a href="../lessons/0001-znaiomstvo-z-kolektsiiamy.html">1</a>, <a href="../lessons/0002-list-u-detaliakh.html">2</a>, <a href="../lessons/0007-mutable-kolektsii-na-praktytsi.html">7</a></p>
+
+<h2>Доступ</h2>
+<table>
+<tr><th>Задача</th><th>Синтаксис</th><th>Якщо не знайдено</th></tr>
+<tr><td>Елемент за індексом</td><td><code>list[i]</code></td><td>IndexOutOfBoundsException</td></tr>
+<tr><td>Елемент за індексом, безпечно</td><td><code>list.getOrNull(i)</code></td><td>null</td></tr>
+<tr><td>Перший / останній</td><td><code>list.first()</code> / <code>list.last()</code></td><td>NoSuchElementException</td></tr>
+<tr><td>Значення за ключем</td><td><code>map[key]</code></td><td>null</td></tr>
+<tr><td>Значення за ключем, суворо</td><td><code>map.getValue(key)</code></td><td>NoSuchElementException</td></tr>
+<tr><td>Значення з дефолтом</td><td><code>map.getOrDefault(key, default)</code></td><td>default</td></tr>
+</table>
+<p class="topic">→ Урок <a href="../lessons/0002-list-u-detaliakh.html">2</a>, <a href="../lessons/0003-set-ta-map.html">3</a></p>
+
+<h2>Зміна (mutable)</h2>
+<table>
+<tr><th>Колекція</th><th>Додати</th><th>Видалити</th></tr>
+<tr><td>MutableList</td><td><code>add(x)</code> / <code>+= x</code></td><td><code>remove(x)</code> / <code>removeAt(i)</code> / <code>-= x</code></td></tr>
+<tr><td>MutableSet</td><td><code>add(x)</code></td><td><code>remove(x)</code></td></tr>
+<tr><td>MutableMap</td><td><code>put(k, v)</code> / <code>map[k] = v</code></td><td><code>remove(k)</code></td></tr>
+</table>
+<p class="topic">→ Урок <a href="../lessons/0002-list-u-detaliakh.html">2</a>, <a href="../lessons/0007-mutable-kolektsii-na-praktytsi.html">7</a></p>
+
+<h2>Set-специфічні операції</h2>
+<table>
+<tr><th>Операція</th><th>Синтаксис</th><th>Результат</th></tr>
+<tr><td>Обʼєднання</td><td><code>a union b</code></td><td>усі елементи обох</td></tr>
+<tr><td>Перетин</td><td><code>a intersect b</code></td><td>тільки спільні</td></tr>
+<tr><td>Різниця</td><td><code>a subtract b</code></td><td>тільки з a, без спільних</td></tr>
+</table>
+<p class="topic">→ Урок <a href="../lessons/0003-set-ta-map.html">3</a></p>
+
+<h2>Трансформація та пошук</h2>
+<table>
+<tr><th>Функція</th><th>Що робить</th><th>Розмір результату</th></tr>
+<tr><td><code>map { }</code></td><td>перетворює кожен елемент</td><td>той самий</td></tr>
+<tr><td><code>filter { }</code> / <code>filterNot { }</code></td><td>залишає елементи за умовою</td><td>≤ оригінал</td></tr>
+<tr><td><code>forEach { }</code></td><td>дія без результату</td><td>—</td></tr>
+<tr><td><code>find { }</code> / <code>firstOrNull { }</code></td><td>перший, що підходить, або null</td><td>1 елемент або null</td></tr>
+<tr><td><code>flatMap { }</code></td><td>map + розплощення вкладених списків</td><td>сплощений</td></tr>
+<tr><td><code>zip(other)</code></td><td>парує дві колекції по позиції</td><td>мін. з двох розмірів</td></tr>
+</table>
+<p class="topic">→ Урок <a href="../lessons/0004-funktsionalni-operatsii-1.html">4</a>, <a href="../lessons/0006-prosunuti-transformatsii.html">6</a></p>
+
+<h2>Сортування, агрегація, групування</h2>
+<table>
+<tr><th>Функція</th><th>Повертає</th></tr>
+<tr><td><code>sortedBy { }</code> / <code>sortedByDescending { }</code></td><td>новий впорядкований список</td></tr>
+<tr><td><code>count { }</code> / <code>sum()</code> / <code>sumOf { }</code> / <code>average()</code></td><td>одне число</td></tr>
+<tr><td><code>maxByOrNull { }</code> / <code>minByOrNull { }</code></td><td>елемент або null</td></tr>
+<tr><td><code>groupBy { }</code></td><td><code>Map&lt;K, List&lt;V&gt;&gt;</code></td></tr>
+<tr><td><code>associate { }</code> / <code>associateWith { }</code> / <code>associateBy { }</code></td><td><code>Map&lt;K, V&gt;</code></td></tr>
+<tr><td><code>fold(initial) { acc, e -&gt; }</code></td><td>одне значення, безпечно для порожньої колекції</td></tr>
+<tr><td><code>reduce { acc, e -&gt; }</code></td><td>одне значення, виняток на порожній колекції</td></tr>
+</table>
+<p class="topic">→ Урок <a href="../lessons/0005-poshuk-sortuvannia-ahrehatsiia.html">5</a>, <a href="../lessons/0006-prosunuti-transformatsii.html">6</a></p>
+
+<h2>Копія проти посилання</h2>
+<table>
+<tr><th>Код</th><th>Результат</th></tr>
+<tr><td><code>val b = a</code></td><td>аліасинг — b і a один обʼєкт</td></tr>
+<tr><td><code>val b = a.toMutableList()</code></td><td>незалежна копія</td></tr>
+<tr><td><code>val b = a.toList()</code></td><td>незалежна read-only копія</td></tr>
+</table>
+<p class="topic">→ Урок <a href="../lessons/0007-mutable-kolektsii-na-praktytsi.html">7</a></p>
+
+<h2>Sequences</h2>
+<table>
+<tr><th>Крок</th><th>Синтаксис</th></tr>
+<tr><td>Почати послідовність</td><td><code>collection.asSequence()</code></td></tr>
+<tr><td>Intermediate (лінива)</td><td><code>.map { }</code>, <code>.filter { }</code> — не обчислюють нічого одразу</td></tr>
+<tr><td>Terminal (запускає обчислення)</td><td><code>.toList()</code>, <code>.first()</code>, <code>.sum()</code></td></tr>
+</table>
+<p class="topic">→ Урок <a href="../lessons/0008-vstup-do-sequences.html">8</a></p>
+
+</main>
+</body>
+</html>

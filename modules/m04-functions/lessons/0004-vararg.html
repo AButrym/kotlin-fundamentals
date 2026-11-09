@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 4: Vararg</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Функції» · Урок 4 з 8 · ~5 хв</p>
+  <h1>Vararg — довільна кількість аргументів</h1>
+  <p class="subtitle">Остання зупинка перед лямбдами: функції, які приймають «скільки завгодно» аргументів.</p>
+</header>
+
+<h2>1. Модифікатор vararg</h2>
+<p><code>vararg</code> дозволяє передати скільки завгодно аргументів одного типу — всередині функції вони доступні як масив:</p>
+<pre><code>fun sum(vararg numbers: Int): Int {
+    var total = 0
+    for (n in numbers) total += n
+    return total
+}
+
+sum(1, 2, 3)        // 6
+sum()                // 0
+sum(1, 2, 3, 4, 5)   // 15</code></pre>
+<div class="callout"><code>vararg</code>-параметр зазвичай ставлять останнім у списку параметрів. Якщо після нього є ще параметри, їх обов'язково потрібно передавати як іменовані аргументи.</div>
+
+<h2>2. Spread-оператор *</h2>
+<p>Щоб передати вміст готового масиву у vararg-параметр, використовують <code>*</code>:</p>
+<pre><code>val nums = intArrayOf(1, 2, 3)
+sum(*nums)</code></pre>
+<div class="warn">Без <code>*</code> компілятор спробує передати сам масив як один елемент — і не скомпілюється, якщо типи не збігаються.</div>
+
+<div class="quiz" data-answer="*">
+  <div class="q">Який оператор потрібен, щоб передати елементи наявного масиву у vararg-параметр (а не сам масив цілком)?</div>
+  <input type="text" placeholder="символ">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="0">
+  <div class="q">Що поверне <code>sum()</code> без жодного аргументу, якщо <code>total</code> ініціалізовано нулем?</div>
+  <input type="text" placeholder="число">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+<p>Додайте у <code>main</code> ще один виклик <code>sum</code> з довільною кількістю чисел і перевірте, що вивід очікуваний.</p>
+<div class="playground-embed"><iframe src="https://pl.kotl.in/batxSpNMk" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/batxSpNMk" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<div class="ok">
+Це завершує базовий блок. Ви вже вмієте: оголошувати функції, писати їх коротко через вираз, налаштовувати аргументи за замовчуванням та іменовано, приймати змінну кількість аргументів. Далі — функції як значення: лямбди, посилання на функції та функції вищого порядку.
+</div>
+
+<h2>Довідка</h2>
+<p>Повний синтаксис і глосарій — у довіднику <a href="../reference/0001-funktsii-kotlin.html">«Функції в Kotlin — шпаргалка»</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0003-argumenty.html">← Попередній урок</a> · <a href="0005-funktsionalni-typy-lambda.html">Наступний урок: Лямбда-вирази →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

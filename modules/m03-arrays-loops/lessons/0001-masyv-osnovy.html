@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 1: Масив: створення та індексація</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Цикли та масиви» · Урок 1 з 13 · ~6 хв</p>
+  <h1>Масив: створення та індексація</h1>
+  <p class="subtitle">Як зберегти багато значень одного типу під одним іменем.</p>
+</header>
+
+<h2>1. Навіщо потрібен масив</h2>
+
+<p>Досі кожне значення жило у власній змінній. Щоб зберегти оцінки 30 студентів, не можна ж оголошувати <code>score1</code>, <code>score2</code>, …, <code>score30</code>. <strong>Масив (array)</strong> — це впорядкована послідовність елементів одного типу, що має одне ім’я й фіксований розмір. Окремий елемент вибирають за номером — <a href="../../../glossary/index.html#index">індексом</a>.</p>
+
+<pre><code>val scores = arrayOf(5, 3, 8, 1)
+
+println(scores[0])      // 5  — перший елемент
+println(scores.size)    // 4  — кількість елементів</code></pre>
+
+<div class="warn">Індекси починаються з <strong>нуля</strong>. Перший елемент — <code>scores[0]</code>, останній — <code>scores[scores.size - 1]</code> (або коротше <code>scores[scores.lastIndex]</code>).</div>
+
+<div class="quiz" data-answer="4">
+  <div class="q">Масив має 5 елементів. Який індекс має останній із них?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>2. Читання й запис елементів</h2>
+
+<p>Квадратні дужки працюють в обидва боки: і для читання, і для запису.</p>
+
+<pre><code>val scores = arrayOf(5, 3, 8, 1)
+scores[1] = 10                // тепер [5, 10, 8, 1]
+scores[2] = scores[2] + 1     // тепер [5, 10, 9, 1]</code></pre>
+
+<div class="callout"><code>val scores</code> означає, що змінна <code>scores</code> завжди вказує на <strong>той самий</strong> масив. Але вміст цього масиву змінювати можна — про це докладніше в наступному уроці.</div>
+
+<h2>3. Розмір фіксований, а межі перевіряються</h2>
+
+<p>Розмір масиву не змінюється після створення: додати шостий елемент у масив із п’яти не можна. (Структури, що ростуть, — <a href="../../../glossary/index.html#list">колекції</a> — буде в окремому модулі.) Спроба звернутися до неіснуючого індексу не «тихо» читає чужу пам’ять, а зупиняє програму винятком:</p>
+
+<pre><code>val scores = arrayOf(5, 3, 8, 1)
+println(scores[4])
+// Exception ... ArrayIndexOutOfBoundsException: Index 4 out of bounds for length 4</code></pre>
+
+<div class="quiz" data-correct="C">
+  <p class="quiz-q">Що станеться при виконанні <code>scores[scores.size]</code> для непорожнього масиву?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">Поверне <code>0</code></button>
+    <button class="quiz-option" data-choice="B">Поверне останній елемент</button>
+    <button class="quiz-option" data-choice="C">Програма зупиниться з <code>ArrayIndexOutOfBoundsException</code></button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: коректні індекси — від 0 до size − 1." data-wrong="Ні: індекс `size` уже за межами масиву, тож буде виняток."></p>
+</div>
+
+<h2>4. Практика</h2>
+
+<div class="callout">Створіть масив із п’яти температур. Замініть третє значення на <code>20</code>, потім виведіть перше значення, останнє значення та розмір масиву.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-embed"><iframe src="https://pl.kotl.in/OQSIzgN2K?theme=darcula" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/OQSIzgN2K?theme=darcula" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<h2>Довідка</h2>
+
+<p>Підсумок по масивах — у шпаргалці <a href="../reference/0001-masyvy-ta-matrytsi.html">«Масиви та матриці»</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="index.html">← До змісту модуля</a> · <a href="0002-masyv-inicializatsiya.html">Наступний урок: Ініціалізація, копіювання та порівняння масивів →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

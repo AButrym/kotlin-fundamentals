@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Kotlin Fundamentals — Цикли та масиви</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<nav class="breadcrumbs"><a href="../../../index.html">Карта курсу</a><span class="sep">/</span>М03 · Цикли та масиви · <a href="../../../glossary/index.html">Індекс термінів</a></nav>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals</p>
+  <h1>Модуль «Цикли та масиви»</h1>
+  <p class="subtitle">13 коротких уроків (≤10 хв кожен). Проходьте по порядку — кожен наступний спирається на попередній. Модуль завершується побудовою розв’язуваного поля «П’ятнашок».</p>
+</header>
+
+<div class="callout"><strong>Що потрібно знати перед початком:</strong> базові типи, умовні конструкції (<code>if</code>/<code>when</code>), <code>println</code>. Класи й функції ви ще детально не вивчали: з уроку 8 ми користуємося простими функціями <code>fun</code> «за шаблоном», а лямбди й методи класів показуємо лише як підгляд у наступні модулі — на них даються посилання на <a href="../../../glossary/index.html">індекс термінів</a>.</div>
+
+<h2>Блок 1 · Масиви</h2>
+<table>
+  <tr><th>№</th><th>Урок</th><th>Що покриває</th><th>Час</th></tr>
+  <tr>
+    <td>1</td>
+    <td><a href="0001-masyv-osnovy.html">Масив: створення та індексація</a></td>
+    <td>Як зберегти багато значень одного типу під одним іменем.</td>
+    <td>~6 хв</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><a href="0002-masyv-inicializatsiya.html">Ініціалізація, копіювання та порівняння масивів</a></td>
+    <td>IntArray проти Array&lt;Int&gt;, друк, посилальна семантика.</td>
+    <td>~8 хв</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><a href="0003-vkladeni-masyvy.html">Вкладені масиви: матриці та зубчасті масиви</a></td>
+    <td>Масив масивів, спільні рядки як типова пастка.</td>
+    <td>~8 хв</td>
+  </tr>
+</table>
+<h2>Блок 2 · Цикли</h2>
+<table>
+  <tr><th>№</th><th>Урок</th><th>Що покриває</th><th>Час</th></tr>
+  <tr>
+    <td>4</td>
+    <td><a href="0004-range-ta-for.html">Діапазони та цикл for</a></td>
+    <td>..&lt;, until, downTo, step.</td>
+    <td>~8 хв</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td><a href="0005-iteratsiya-po-masyvu.html">Ітерація по масиву та матриці</a></td>
+    <td>Значення, індекси, withIndex, вкладені цикли.</td>
+    <td>~8 хв</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td><a href="0006-while-do-while.html">Цикли while та do-while</a></td>
+    <td>Коли кількість повторів невідома наперед.</td>
+    <td>~7 хв</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td><a href="0007-break-continue-repeat.html">break, continue, мітки та repeat</a></td>
+    <td>Керування ходом циклу та найпростіше повторення.</td>
+    <td>~8 хв</td>
+  </tr>
+</table>
+<h2>Блок 3 · Прості алгоритми</h2>
+<table>
+  <tr><th>№</th><th>Урок</th><th>Що покриває</th><th>Час</th></tr>
+  <tr>
+    <td>8</td>
+    <td><a href="0008-linijnyj-poshuk-pidrakhunok.html">Лінійний пошук, підрахунок, сума, мінімум</a></td>
+    <td>Базові шаблони обходу масиву.</td>
+    <td>~9 хв</td>
+  </tr>
+  <tr>
+    <td>9</td>
+    <td><a href="0009-bulbashka-binarnyj-poshuk.html">Сортування бульбашкою та бінарний пошук</a></td>
+    <td>Обміни, інваріант діапазону, логарифмічний пошук.</td>
+    <td>~10 хв</td>
+  </tr>
+</table>
+<h2>Блок 4 · Матриці на страйдах</h2>
+<table>
+  <tr><th>№</th><th>Урок</th><th>Що покриває</th><th>Час</th></tr>
+  <tr>
+    <td>10</td>
+    <td><a href="0010-strajdy.html">Матриця в одновимірному масиві: страйди</a></td>
+    <td>index = row * cols + col.</td>
+    <td>~8 хв</td>
+  </tr>
+  <tr>
+    <td>11</td>
+    <td><a href="0011-operator-indeksatsii.html">Клас Matrix та оператор індексації</a></td>
+    <td>Мінімум про методи класу та operator get/set.</td>
+    <td>~9 хв</td>
+  </tr>
+</table>
+<h2>Блок 5 · Підсумок: «П’ятнашки»</h2>
+<table>
+  <tr><th>№</th><th>Урок</th><th>Що покриває</th><th>Час</th></tr>
+  <tr>
+    <td>12</td>
+    <td><a href="0012-pyatnashky-inversii.html">П’ятнашки: інверсії та розв’язуваність</a></td>
+    <td>Перестановка 1..16, підрахунок інверсій, виправлення.</td>
+    <td>~10 хв</td>
+  </tr>
+  <tr>
+    <td>13</td>
+    <td><a href="0013-pyatnashky-druk-polya.html">П’ятнашки: друк поля</a></td>
+    <td>Обхід по рядках і клітинках: масив масивів проти страйдів.</td>
+    <td>~8 хв</td>
+  </tr>
+</table>
+
+<h3 style="margin-top:32px">Довідкові матеріали</h3>
+<table>
+  <tr><th>Документ</th><th>Опис</th></tr>
+  <tr><td><a href="../reference/0001-masyvy-ta-matrytsi.html">Масиви та матриці — шпаргалка</a></td><td>Створення, операції, вкладені масиви (уроки 1–3)</td></tr>
+  <tr><td><a href="../reference/0002-diapazony-ta-tsykly.html">Діапазони та цикли — шпаргалка</a></td><td>Діапазони, <code>for</code>/<code>while</code>/<code>repeat</code>, <code>break</code>/<code>continue</code> (уроки 4–7)</td></tr>
+  <tr><td><a href="../reference/0003-alhorytmy-strajdy-pyatnashky.html">Алгоритми, страйди, П’ятнашки — шпаргалка</a></td><td>Пошук, сортування, страйди, <code>Matrix</code>, інверсії (уроки 8–13)</td></tr>
+</table>
+
+<p><a href="../../m04-functions/lessons/index.html">Наступний модуль: Функції →</a></p>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 3: Вкладені масиви: матриці та зубчасті масиви</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Цикли та масиви» · Урок 3 з 13 · ~8 хв</p>
+  <h1>Вкладені масиви: матриці та зубчасті масиви</h1>
+  <p class="subtitle">Масив масивів, спільні рядки як типова пастка.</p>
+</header>
+
+<h2>1. Масив масивів</h2>
+
+<p>Елементом масиву може бути інший масив. Так виглядає таблиця — <a href="../../../glossary/index.html#matrix">матриця</a>: рядки є окремими масивами.</p>
+
+<pre><code>val grid = arrayOf(
+    intArrayOf(1, 2, 3),
+    intArrayOf(4, 5, 6),
+)                          // тип: Array&lt;IntArray&gt;
+
+println(grid[1][2])        // 6 — рядок 1, стовпець 2
+println(grid.size)         // 2 — кількість рядків
+println(grid[0].size)      // 3 — кількість стовпців</code></pre>
+
+<p>Читайте <code>grid[r][c]</code> зліва направо: спершу вибираємо рядок <code>r</code> (це <code>IntArray</code>), потім у ньому елемент <code>c</code>.</p>
+
+<div class="quiz" data-answer="3">
+  <div class="q">Матриця має 3 рядки та 4 стовпці. Що поверне <code>grid.size</code>?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>2. Матриця потрібного розміру</h2>
+
+<pre><code>val grid = Array(3) { IntArray(4) }   // 3 рядки × 4 стовпці, усе нулі
+grid[1][2] = 7
+println(grid.contentDeepToString())
+// [[0, 0, 0, 0], [0, 0, 7, 0], [0, 0, 0, 0]]</code></pre>
+
+<p>Лямбда <code>{ IntArray(4) }</code> викликається <strong>для кожного рядка окремо</strong>, тому всі рядки — різні масиви. Для друку вкладених масивів — <code>contentDeepToString()</code>.</p>
+
+<div class="warn"><strong>Типова пастка.</strong> Якщо створити один рядок і повторити його, усі «рядки» будуть тим самим об’єктом:<pre><code>val row = IntArray(4)
+val broken = Array(3) { row }   // три посилання на ОДИН масив
+broken[0][0] = 1
+// [[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0]]</code></pre></div>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Після <code>val g = Array(2) { IntArray(2) }</code> та <code>g[0][0] = 5</code> що надрукує <code>g.contentDeepToString()</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>[[5, 0], [5, 0]]</code></button>
+    <button class="quiz-option" data-choice="B"><code>[[5, 0], [0, 0]]</code></button>
+    <button class="quiz-option" data-choice="C"><code>[[0, 0], [0, 0]]</code></button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: рядки незалежні, змінився лише перший." data-wrong="Ні: `IntArray(2)` виконується для кожного рядка окремо, тож змінюється тільки рядок 0."></p>
+</div>
+
+<h2>3. Зубчасті масиви</h2>
+
+<p>Рядки вкладеного масиву не зобов’язані мати однакову довжину. Такий <a href="../../../glossary/index.html#jagged-array">зубчастий масив</a> зручний, наприклад, для трикутників:</p>
+
+<pre><code>val triangle = Array(4) { r -&gt; IntArray(r + 1) }
+println(triangle.contentDeepToString())
+// [[0], [0, 0], [0, 0, 0], [0, 0, 0, 0]]
+
+println(triangle[2].size)   // 3</code></pre>
+
+<div class="callout">Через зубчасті масиви довжину рядка завжди беруть із самого рядка: <code>grid[r].size</code>, а не <code>grid[0].size</code> — так код працює для будь-якої форми.</div>
+
+<h2>4. Практика</h2>
+
+<div class="callout">Створіть матрицю 3×3 з нулями та вручну поставте одиниці на головній діагоналі (<code>grid[0][0]</code>, <code>grid[1][1]</code>, <code>grid[2][2]</code>). Виведіть результат через <code>contentDeepToString()</code>. (Автоматично заповнювати діагональ циклом ви навчитеся через два уроки.)</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-embed"><iframe src="https://pl.kotl.in/y816Vp2ON?theme=darcula" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/y816Vp2ON?theme=darcula" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0001-masyvy-ta-matrytsi.html">«Масиви та матриці — шпаргалка»</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0002-masyv-inicializatsiya.html">← Попередній урок</a> · <a href="0004-range-ta-for.html">Наступний урок: Діапазони та цикл for →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

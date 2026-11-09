@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Довідка: Діапазони та цикли — шпаргалка</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="../lessons/index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Цикли та масиви» · Довідка</p>
+  <h1>Діапазони та цикли — шпаргалка</h1>
+  <p class="subtitle">Для уроків 4–7.</p>
+</header>
+
+<h2>1. Діапазони</h2>
+
+<table>
+  <tr><th>Запис</th><th>Значення</th></tr>
+  <tr><td><code>1..5</code></td><td>1 2 3 4 5</td></tr>
+  <tr><td><code>1 until 5</code>  /  <code>1..&lt;5</code></td><td>1 2 3 4</td></tr>
+  <tr><td><code>5 downTo 1</code></td><td>5 4 3 2 1</td></tr>
+  <tr><td><code>1..10 step 3</code></td><td>1 4 7 10</td></tr>
+  <tr><td><code>10 downTo 0 step 5</code></td><td>10 5 0</td></tr>
+  <tr><td><code>(1..5).reversed()</code></td><td>5 4 3 2 1</td></tr>
+  <tr><td><code>5..1</code></td><td>порожній (завжди рахує вгору)</td></tr>
+  <tr><td><code>x in 1..10</code>, <code>x !in 1..10</code></td><td>перевірка належності; працює для <code>Char</code></td></tr>
+</table>
+
+<h2>2. Цикли</h2>
+
+<pre><code>for (i in 0 until n) { }                 // індекси
+for (x in arr) { }                       // значення (копія, лише читання)
+for (i in arr.indices) { arr[i] = 0 }    // змінюємо елементи
+for ((i, x) in arr.withIndex()) { }      // індекс + значення
+for (i in arr.lastIndex downTo 0) { }    // назад
+
+while (умова) { }                        // перевірка ПЕРЕД тілом
+do { } while (умова)                     // перевірка ПІСЛЯ тіла, ≥ 1 раз
+repeat(n) { i -&gt; }                       // n разів (лямбда)</code></pre>
+
+<h2>3. Керування ходом</h2>
+
+<table>
+  <tr><th>Конструкція</th><th>Дія</th></tr>
+  <tr><td><code>break</code></td><td>вихід із найближчого циклу</td></tr>
+  <tr><td><code>continue</code></td><td>наступна ітерація найближчого циклу</td></tr>
+  <tr><td><code>outer@ for …</code> + <code>break@outer</code></td><td>вихід із зовнішнього циклу</td></tr>
+  <tr><td><code>continue@outer</code></td><td>наступна ітерація зовнішнього циклу</td></tr>
+</table>
+
+<h2>4. Який цикл обрати</h2>
+
+<table>
+  <tr><th>Задача</th><th>Цикл</th></tr>
+  <tr><td>відома кількість / діапазон / індекси</td><td><code>for</code></td></tr>
+  <tr><td>кількість невідома, повторюємо поки умова</td><td><code>while</code></td></tr>
+  <tr><td>тіло має виконатись хоча б раз</td><td><code>do-while</code></td></tr>
+  <tr><td>просто N повторів</td><td><code>repeat(n)</code></td></tr>
+</table>
+
+<p>Деталі: <a href="../../../glossary/index.html#range">діапазони</a>, <a href="../../../glossary/index.html#progression">прогресії</a>, <a href="../../../glossary/index.html#for-loop">for</a>, <a href="../../../glossary/index.html#while-loop">while</a>, <a href="../../../glossary/index.html#break-continue">break/continue</a>, <a href="../../../glossary/index.html#repeat">repeat</a>.</p>
+
+</div>
+</body>
+</html>

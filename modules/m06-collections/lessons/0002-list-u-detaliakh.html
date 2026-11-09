@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>List у деталях</title>
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<main>
+
+<a class="back-link" href="index.html">← Усі уроки</a>
+<p class="eyebrow">Kotlin Collections · Урок 2 з 9</p>
+<h1>List у деталях</h1>
+
+<div class="callout callout--known">
+  <span class="callout-label">Що ви вже знаєте</span>
+  <p>З уроку 1: <code>List</code> — впорядкована колекція з дублікатами, <code>MutableList</code> — те саме, але зі змінами. Зараз розберемо, як цим користуватись у реальному коді.</p>
+</div>
+
+<h2>Створення</h2>
+
+<pre><code>val readOnly = listOf("a", "b", "c")        // List&lt;String&gt;
+val editable = mutableListOf("a", "b", "c") // MutableList&lt;String&gt;
+val empty = mutableListOf&lt;Int&gt;()           // порожній, тип треба вказати явно
+
+val built = buildList {          // зручно, коли список складається за логікою
+    add("x")
+    if (2 &gt; 1) add("y")
+}
+</code></pre>
+
+<p><code>buildList</code> — це функція-будівельник: усередині лямбди ви працюєте як зі звичайним <code>MutableList</code>, а назовні отримуєте вже готовий read-only <code>List</code>.</p>
+
+<h2>Доступ до елементів</h2>
+
+<pre><code>val names = listOf("Оля", "Максим", "Ірина")
+
+names[0]              // "Оля" — доступ за індексом
+names.first()          // "Оля"
+names.last()           // "Ірина"
+names.size              // 3
+names.getOrNull(10)     // null, а не помилка
+names[10]               // IndexOutOfBoundsException!
+</code></pre>
+
+<div class="callout callout--pitfall">
+  <span class="callout-label">Типова пастка</span>
+  <p><code>list[index]</code> кидає виняток, якщо індексу не існує. Коли індекс може вийти за межі (наприклад, з користувацьких даних), користуйтесь <code>getOrNull()</code> замість квадратних дужок.</p>
+</div>
+
+<h2>Ітерація</h2>
+
+<pre><code>for (name in names) {
+    println(name)
+}
+
+names.forEachIndexed { index, name -&gt;
+    println("$index: $name")
+}
+</code></pre>
+
+<h2>Зміна mutable-списку</h2>
+
+<pre><code>val cart = mutableListOf("хліб", "молоко")
+
+cart.add("яйця")           // [хліб, молоко, яйця]
+cart.remove("молоко")      // [хліб, яйця]
+cart.removeAt(0)           // [яйця]
+cart.contains("яйця")      // true
+cart.indexOf("яйця")       // 0
+cart.clear()                // []
+</code></pre>
+
+<div class="quiz" data-correct="C">
+  <p class="quiz-q">Що поверне <code>listOf(10, 20, 30).getOrNull(5)</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">10</button>
+    <button class="quiz-option" data-choice="B">30</button>
+    <button class="quiz-option" data-choice="C">null</button>
+    <button class="quiz-option" data-choice="D">помилку</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — getOrNull() ніколи не кидає виняток, повертає null для неіснуючого індексу." data-wrong="Ні. getOrNull() спеціально створений, щоб не кидати виняток при виході за межі."></p>
+</div>
+
+<div class="quiz" data-correct="A">
+  <p class="quiz-q">Який розмір буде у <code>cart</code> після: <code>val cart = mutableListOf("a"); cart.add("b"); cart.add("a")</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">3</button>
+    <button class="quiz-option" data-choice="B">2</button>
+    <button class="quiz-option" data-choice="C">1</button>
+    <button class="quiz-option" data-choice="D">помилка</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — List дозволяє дублікати, тому 'a' зберігається двічі." data-wrong="Ні. Пригадайте: List (на відміну від Set) дозволяє дублікати."></p>
+</div>
+
+<div class="callout callout--source">
+  <span class="callout-label">Головне джерело</span>
+  <p><a href="https://kotlinlang.org/docs/constructing-collections.html" target="_blank" rel="noopener">Kotlin Docs: Constructing collections</a> — усі способи створення колекцій, включно з <code>buildList</code>. Додатково: <a href="https://typealias.com/start/kotlin-collections/" target="_blank" rel="noopener">typealias.com — Collections: Lists and Sets</a>.</p>
+</div>
+
+<div class="callout callout--ask">
+  <span class="callout-label">Застрягли?</span>
+  <p>Якщо різниця між <code>add()</code>, <code>remove()</code> та <code>removeAt()</code> плутається — це нормально на цьому етапі. Запитайте викладача/агента з конкретним прикладом коду, який не працює так, як очікували.</p>
+</div>
+
+<div class="lesson-nav">
+  <a href="0001-znaiomstvo-z-kolektsiiamy.html">← Знайомство з колекціями</a>
+  <a href="index.html">Усі уроки</a>
+  <a href="0003-set-ta-map.html">Наступний: Set та Map →</a>
+</div>
+
+</main>
+<script src="../../../assets/quiz.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+/* Спільні стилі курсу Kotlin Fundamentals.
+   Усі кольори — токени на :root. Нову тему додають як :root[data-theme="назва"] { ...токени... }.
+   Секція «Сумісність» підтримує розмітку, якою написані модулі, створені раніше (Collections). */
+
+:root {
+  --bg: #fdfcf9;
+  --ink: #1f2320;
+  --ink-soft: #4b524c;
+  --accent: #7c5cff;
+  --accent-soft: #efe9ff;
+  --rule: #dedad2;
+  --code-bg: #f4f2ec;
+  --code-ink: #2d2a1f;
+  --warn-bg: #fff4e5;
+  --warn-border: #e0a750;
+  --ok-bg: #eaf7ee;
+  --ok-border: #4caf72;
+  --bad-bg: #fbe9e6;
+  --bad-border: #c9503f;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --mono: "JetBrains Mono", "Fira Code", Consolas, "SFMono-Regular", Menlo, monospace;
+  --max-w: 760px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1c19;
+    --ink: #ecebe4;
+    --ink-soft: #b9b7ad;
+    --accent: #b39dff;
+    --accent-soft: #2c2740;
+    --rule: #38392f;
+    --code-bg: #232420;
+    --code-ink: #eae7d8;
+    --warn-bg: #332812;
+    --warn-border: #b8863e;
+    --ok-bg: #16281c;
+    --ok-border: #4caf72;
+    --bad-bg: #2e1c19;
+    --bad-border: #e08a7c;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #1b1c19;
+  --ink: #ecebe4;
+  --ink-soft: #b9b7ad;
+  --accent: #b39dff;
+  --accent-soft: #2c2740;
+  --rule: #38392f;
+  --code-bg: #232420;
+  --code-ink: #eae7d8;
+  --warn-bg: #332812;
+  --warn-border: #b8863e;
+  --ok-bg: #16281c;
+  --ok-border: #4caf72;
+  --bad-bg: #2e1c19;
+  --bad-border: #e08a7c;
+}
+
+* { box-sizing: border-box; }
+
+html { background: var(--bg); }
+
+body {
+  margin: 0;
+  padding: 0 20px 80px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.page, main, .wrap {
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+
+/* ---------- Навігація ---------- */
+.index-link, .back-link {
+  display: inline-block;
+  margin-top: 28px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--rule);
+}
+.index-link:hover, .back-link:hover { color: var(--accent); }
+
+.breadcrumbs {
+  margin-top: 28px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.breadcrumbs a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px dotted var(--rule); }
+.breadcrumbs a:hover { color: var(--accent); }
+.breadcrumbs .sep { margin: 0 6px; opacity: .6; }
+
+/* ---------- Заголовки ---------- */
+header.lesson-header {
+  margin-top: 12px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--rule);
+}
+main > .eyebrow:first-of-type { margin-top: 12px; }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 6px;
+}
+
+h1, h2, h3 { line-height: 1.25; }
+h1 { font-size: 34px; margin: 0 0 8px; }
+h2 { font-size: 23px; margin: 40px 0 12px; padding-top: 4px; }
+h3 { font-size: 18px; margin: 26px 0 8px; }
+
+.subtitle { color: var(--ink-soft); font-size: 17px; margin: 0; }
+
+p { margin: 12px 0; }
+ul, ol { margin: 12px 0; padding-left: 1.4em; }
+li { margin-bottom: 4px; }
+
+a { color: var(--accent); }
+
+/* ---------- Код ---------- */
+code {
+  font-family: var(--mono);
+  background: var(--code-bg);
+  color: var(--code-ink);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+pre {
+  background: var(--code-bg);
+  color: var(--code-ink);
+  padding: 16px 18px;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 15px;
+  line-height: 1.55;
+  margin: 16px 0;
+  border: 1px solid var(--rule);
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+
+/* ---------- Таблиці ---------- */
+table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 16px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-family: var(--mono); font-size: 12px; text-transform: uppercase; color: var(--ink-soft); letter-spacing: 0.04em; }
+
+/* ---------- Виноски ---------- */
+.callout, .warn, .ok {
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  margin: 18px 0;
+  font-size: 16px;
+}
+.callout { border-left: 4px solid var(--accent); background: var(--accent-soft); }
+.warn    { border-left: 4px solid var(--warn-border); background: var(--warn-bg); }
+.ok      { border-left: 4px solid var(--ok-border); background: var(--ok-bg); }
+.callout p:last-child { margin-bottom: 0; }
+
+/* Сумісність: розмітка модуля Collections */
+.callout--known   { border-left-color: var(--ok-border); background: var(--ok-bg); }
+.callout--source  { border-left-color: var(--accent); }
+.callout--ask     { border-left-color: var(--warn-border); background: var(--warn-bg); font-style: italic; }
+.callout--pitfall { border-left-color: var(--bad-border); background: var(--bad-bg); }
+.callout-label {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-style: normal;
+}
+
+.source { font-family: var(--mono); font-size: 13px; color: var(--ink-soft); }
+
+.ref-card {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 40px 0 16px;
+}
+
+.glossary dt { font-family: var(--mono); font-weight: 600; margin-top: 14px; }
+.glossary dd { margin: 4px 0 0; color: var(--ink-soft); }
+
+/* ---------- Низ уроку ---------- */
+footer.lesson-footer {
+  margin-top: 60px;
+  padding-top: 20px;
+  border-top: 2px solid var(--rule);
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+.lesson-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 48px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 14px;
+}
+.lesson-nav a { text-decoration: none; }
+.lesson-nav .spacer { flex: 1; }
+
+/* ---------- Playground ---------- */
+.playground-embed { border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; margin: 16px 0; }
+.playground-embed iframe { width: 100%; height: 420px; border: 0; display: block; background: #fff; }
+.playground-note { font-family: var(--mono); font-size: 13px; color: var(--ink-soft); margin: -8px 0 16px; }
+
+/* Плейсхолдер для Playground: код вже в уроці, посилання pl.kotl.in додається пізніше.
+   Розмітка: <div class="playground-todo" data-slug="loops-01"> <pre><code>…</code></pre> <p>…</p> </div> */
+.playground-todo {
+  border: 1px dashed var(--accent);
+  border-radius: 8px;
+  padding: 4px 16px 12px;
+  margin: 16px 0;
+  background: var(--accent-soft);
+}
+.playground-todo .playground-todo-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 10px 0 0;
+}
+.playground-todo pre { margin: 8px 0; }
+
+/* ---------- Квіз: текстова відповідь (Functions) ---------- */
+.quiz {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin: 20px 0;
+  background: color-mix(in srgb, var(--code-bg) 60%, transparent);
+}
+.quiz .q, .quiz-q { font-weight: 600; margin: 0 0 10px; }
+.quiz input[type="text"] {
+  font-family: var(--mono);
+  font-size: 15px;
+  padding: 8px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--ink);
+  width: 100%;
+  max-width: 360px;
+}
+.quiz button.check, .quiz > button {
+  font-family: var(--mono);
+  font-size: 14px;
+  padding: 8px 14px;
+  margin-left: 8px;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--ink);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.quiz button.check:hover, .quiz > button:hover { background: var(--accent); color: white; }
+.quiz .feedback { margin-top: 10px; font-family: var(--mono); font-size: 14px; display: none; }
+.quiz .feedback.correct { display: block; color: var(--ok-border); }
+.quiz .feedback.wrong { display: block; color: var(--warn-border); }
+
+/* ---------- Квіз: вибір варіанта (Collections) ---------- */
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-option {
+  font-family: var(--serif);
+  font-size: 16px;
+  text-align: left;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 9px 14px;
+  cursor: pointer;
+  color: var(--ink);
+}
+.quiz-option:hover { border-color: var(--accent); }
+.quiz-option.is-correct   { background: var(--ok-bg); border-color: var(--ok-border); }
+.quiz-option.is-incorrect { background: var(--bad-bg); border-color: var(--bad-border); }
+.quiz-option:disabled { cursor: default; }
+.quiz-feedback { margin: 12px 0 0; font-size: 15px; color: var(--ink-soft); min-height: 1.2em; }
+
+.task-list { list-style: none; padding-left: 0; }
+.task-list li { padding: 10px 0 10px 30px; border-bottom: 1px solid var(--rule); position: relative; }
+.task-list li::before { content: "□"; position: absolute; left: 0; color: var(--accent); }
+
+/* ---------- Індекси (модулі та курс) ---------- */
+.index-list { list-style: none; padding: 0; margin: 0; }
+.index-list li { display: flex; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
+.index-list .num { font-family: var(--mono); color: var(--ink-soft); font-size: 14px; min-width: 28px; }
+.index-list a { text-decoration: none; }
+.index-list .topic { color: var(--ink-soft); font-size: 15px; display: block; margin-top: 2px; }
+
+/* Мапа курсу: картки модулів */
+.module-grid { display: grid; gap: 14px; margin: 16px 0; }
+.module-card {
+  display: block;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 14px 18px;
+  text-decoration: none;
+  color: var(--ink);
+}
+a.module-card:hover { border-color: var(--accent); }
+.module-card .module-no { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); letter-spacing: .06em; text-transform: uppercase; }
+.module-card h3 { margin: 2px 0 6px; font-size: 19px; }
+.module-card p { margin: 0; font-size: 15px; color: var(--ink-soft); }
+.module-card.is-planned { border-style: dashed; background: transparent; }
+
+.badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+  vertical-align: middle;
+  margin-left: 6px;
+}
+.badge--ready   { color: var(--ok-border); border-color: var(--ok-border); }
+.badge--planned { color: var(--warn-border); border-color: var(--warn-border); }
+
+/* Індекс термінів */
+.term-entry { padding: 14px 0; border-bottom: 1px solid var(--rule); scroll-margin-top: 16px; }
+.term-entry:target { background: var(--accent-soft); margin: 0 -12px; padding: 14px 12px; border-radius: 8px; }
+.term-entry h3 { margin: 0 0 4px; font-size: 18px; }
+.term-entry h3 code { font-size: 0.95em; }
+.term-entry p { margin: 4px 0; font-size: 16px; }
+.term-entry .term-links { font-family: var(--mono); font-size: 13px; color: var(--ink-soft); }
+.term-entry .term-links a { margin-right: 10px; }
+.term-entry .term-links .planned { opacity: .7; }
+
+@media print {
+  body { font-size: 13px; padding: 0; }
+  .quiz button, .index-link, .back-link, .breadcrumbs { display: none; }
+  a { color: inherit; text-decoration: none; }
+  pre { border: 1px solid #ccc; }
+}
+
+@media (max-width: 600px) {
+  body { font-size: 16px; padding: 0 16px 60px; }
+  h1 { font-size: 27px; }
+  .quiz input[type="text"] { max-width: 100%; }
+}

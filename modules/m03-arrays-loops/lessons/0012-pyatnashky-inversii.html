@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 12: П’ятнашки: інверсії та розв’язуваність</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Цикли та масиви» · Урок 12 з 13 · ~10 хв</p>
+  <h1>П’ятнашки: інверсії та розв’язуваність</h1>
+  <p class="subtitle">Перестановка 1..16, підрахунок інверсій, виправлення.</p>
+</header>
+
+<h2>1. Постановка</h2>
+
+<p>Поле «П’ятнашок» 4×4: числа <code>1…15</code> та порожня клітинка. Зручно подати поле перестановкою чисел <code>1…16</code>, де **<code>16</code> — порожня клітинка**. Розставлене по порядку <code>1, 2, …, 15, 16</code> поле — розв’язане (порожня клітинка внизу праворуч).</p>
+
+<p>Не кожна перестановка розв’язувана: рівно половина з них недосяжна рухами. Якщо просто перетасувати плитки, гра може виявитись нерозв’язною. Нам потрібна перевірка.</p>
+
+<h2>2. Інверсії</h2>
+
+<p><a href="../../../glossary/index.html#inversion">Інверсія</a> — це пара плиток, що стоять у «неправильному» порядку: перша (зліва) більша за другу (справа), <code>a[i] &gt; a[j]</code> при <code>i &lt; j</code>. Порожню клітинку (<code>16</code>) <strong>не враховуємо</strong>.</p>
+
+<pre><code>fun countInversions(a: IntArray): Int {
+    var count = 0
+    for (i in a.indices) {
+        if (a[i] == BLANK) continue
+        for (j in i + 1 until a.size) {
+            if (a[j] != BLANK &amp;&amp; a[i] &gt; a[j]) count++
+        }
+    }
+    return count
+}</code></pre>
+
+<p>Приклад: у послідовності <code>3, 1, 2</code> інверсії — пари <code>(3, 1)</code> і <code>(3, 2)</code>, тобто 2. Розв’язане поле має 0 інверсій.</p>
+
+<div class="quiz" data-answer="1">
+  <div class="q">Скільки інверсій у послідовності <code>2, 1, 3, 4</code>?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>3. Правило розв’язуваності для 4×4</h2>
+
+<div class="callout">Поле розв’язуване тоді й лише тоді, коли
+<strong>(кількість інверсій + номер рядка порожньої клітинки, рахуючи знизу з 1)</strong> — <strong>непарне</strong> число.</div>
+
+<table>
+  <tr><th>Поле</th><th>Інверсії</th><th>Рядок порожньої знизу</th><th>Сума</th><th>Розв’язуване?</th></tr>
+  <tr><td>розв’язане <code>1…15, ▢</code></td><td>0</td><td>1</td><td>1 — непарне</td><td>так</td></tr>
+  <tr><td><code>14</code> і <code>15</code> поміняні місцями</td><td>1</td><td>1</td><td>2 — парне</td><td>ні (відома задача Лойда)</td></tr>
+</table>
+
+<p><strong>Чому це працює.</strong> Горизонтальний хід (плитка сусідить із порожньою ліворуч/праворуч) не змінює порядку плиток, тож інверсії й рядок лишаються тими самими. Вертикальний хід переносить плитку через 3 інші, тож кількість інверсій змінюється на непарне число, і водночас змінюється на 1 номер рядка порожньої. Парність суми <strong>ніколи не змінюється</strong> — а в розв’язаному полі вона непарна. Те, що за непарної суми розв’язок справді існує, — відомий результат теорії П’ятнашок.</p>
+
+<pre><code>const val SIZE = 4        // розмір сторони
+const val BLANK = 16      // значення порожньої клітинки
+
+fun isSolvable(a: IntArray): Boolean {
+    val blankRow = a.indexOf(BLANK) / SIZE      // 0 = верхній рядок
+    val blankRowFromBottom = SIZE - blankRow    // 1 = нижній рядок
+    return (countInversions(a) + blankRowFromBottom) % 2 == 1
+}</code></pre>
+
+<p><code>const val</code> — константа з відомим значенням; <code>a.indexOf(BLANK)</code> — це той самий лінійний пошук з уроку 8, але готовий.</p>
+
+<div class="quiz" data-correct="A">
+  <p class="quiz-q">Розв’язане поле <code>1…16</code>: скільки інверсій і який рядок порожньої знизу?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">0 і 1 → сума 1, розв’язуване</button>
+    <button class="quiz-option" data-choice="B">0 і 4 → сума 4, розв’язуване</button>
+    <button class="quiz-option" data-choice="C">15 і 1 → сума 16</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: 0 + 1 = 1 — непарне, розв’язуване." data-wrong="Ні: порожня клітинка в нижньому рядку — це рядок 1 знизу, інверсій 0, сума 1 непарна."></p>
+</div>
+
+<h2>4. Генерація: перемішати й виправити парність</h2>
+
+<p>Перемішуємо масив алгоритмом <strong>Фішера–Йетса</strong>: проходимо з кінця й міняємо <code>a[i]</code> з випадковим елементом <code>a[0..i]</code>. Якщо перестановка нерозв’язувана — міняємо місцями <strong>дві будь-які не порожні плитки</strong>: це змінює парність інверсій, а рядок порожньої не змінюється.</p>
+
+<pre><code>fun shuffleBoard(a: IntArray) {
+    for (i in a.lastIndex downTo 1) {
+        val j = Random.nextInt(i + 1)       // 0..i включно
+        val t = a[i]; a[i] = a[j]; a[j] = t
+    }
+}
+
+fun makeSolvableBoard(): IntArray {
+    val a = IntArray(SIZE * SIZE) { it + 1 }   // 1..16
+    shuffleBoard(a)
+    if (!isSolvable(a)) {
+        val blank = a.indexOf(BLANK)
+        val i = if (blank == 0) 1 else 0       // дві позиції, що не є порожньою
+        val j = if (blank &lt;= 1) 2 else 1
+        val t = a[i]; a[i] = a[j]; a[j] = t
+    }
+    return a
+}</code></pre>
+
+<p>Не забудьте на початку файла <code>import kotlin.random.Random</code>. Готова функція <code>a.shuffle()</code> теж існує, але алгоритм корисно написати самому.</p>
+
+<h2>5. Практика</h2>
+
+<div class="callout">Складіть вручну поле, де <code>16</code> стоїть у верхньому лівому куті, а решта числа йдуть по порядку <code>1…15</code>. Порахуйте інверсії та рядок порожньої знизу й вирішіть, чи розв’язуване воно. (Підказка: інверсій 0, а порожня — у 4-му рядку знизу.) Перевірте себе <code>isSolvable</code>.</div>
+
+<div class="quiz" data-answer="парна">
+  <div class="q">Для поля з практики: сума інверсій (0) і рядка порожньої знизу (4) — парна чи непарна? (парна/непарна)</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-embed"><iframe src="https://pl.kotl.in/WSc2a8hS9?theme=darcula" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/WSc2a8hS9?theme=darcula" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0003-alhorytmy-strajdy-pyatnashky.html">«Алгоритми, страйди, П’ятнашки — шпаргалка»</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0011-operator-indeksatsii.html">← Попередній урок</a> · <a href="0013-pyatnashky-druk-polya.html">Наступний урок: П’ятнашки: друк поля →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

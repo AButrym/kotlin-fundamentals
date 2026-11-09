@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Просунуті трансформації: fold, reduce, flatMap, zip</title>
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<main>
+
+<a class="back-link" href="index.html">← Усі уроки</a>
+<p class="eyebrow">Kotlin Collections · Урок 6 з 9</p>
+<h1>Просунуті трансформації: fold, reduce, flatMap, zip</h1>
+
+<div class="callout callout--known">
+  <span class="callout-label">Що ви вже знаєте</span>
+  <p><code>sum()</code> та <code>count()</code> з уроку 5 — це вузькоспеціалізовані випадки більш загальної ідеї: "стиснути колекцію в одне значення". <code>fold</code> і <code>reduce</code> — це та сама ідея, але для будь-якої вашої логіки, не тільки суми.</p>
+</div>
+
+<h2>fold — згорнути колекцію в одне значення</h2>
+
+<pre><code>val prices = listOf(100, 200, 300)
+
+val total = prices.fold(0) { acc, price -&gt; acc + price }
+// старт з 0, потім: 0+100=100, 100+200=300, 300+300=600
+// total = 600
+</code></pre>
+
+<p><code>fold</code> приймає початкове значення (<code>0</code>) і функцію "накопичувач + поточний елемент → новий накопичувач". Це те саме, що <code>sum()</code>, але написане вручну — а значить, підходить для будь-якої операції, не тільки додавання.</p>
+
+<h2>reduce — те саме, але без початкового значення</h2>
+
+<pre><code>val longest = listOf("кіт", "жирафа", "слон")
+    .reduce { longest, next -&gt; if (next.length &gt; longest.length) next else longest }
+// "жирафа"
+</code></pre>
+
+<div class="callout callout--pitfall">
+  <span class="callout-label">Типова пастка</span>
+  <p><code>reduce</code> бере перший елемент колекції як стартове значення — тому на <strong>порожній</strong> колекції він кидає виняток. <code>fold</code> завжди безпечний для порожньої колекції, бо початкове значення ви задаєте самі. Коли не впевнені, що колекція непорожня — обирайте <code>fold</code>.</p>
+</div>
+
+<h2>flatMap — розплощити список списків</h2>
+
+<pre><code>val groups = listOf(listOf(1, 2), listOf(3, 4), listOf(5))
+
+groups.map { it }      // [[1, 2], [3, 4], [5]] — список списків
+groups.flatMap { it }   // [1, 2, 3, 4, 5] — один плаский список
+</code></pre>
+
+<p><code>flatMap</code> — це <code>map</code>, після якого всі отримані списки "склеюються" в один.</p>
+
+<h2>zip — з'єднати дві колекції попарно</h2>
+
+<pre><code>val names = listOf("Оля", "Максим")
+val ages = listOf(20, 22)
+
+names.zip(ages)
+// [("Оля", 20), ("Максим", 22)] — список пар Pair
+</code></pre>
+
+<h2>associate / associateBy — список у мапу</h2>
+
+<pre><code>val names2 = listOf("Оля", "Максим")
+
+names2.associateWith { it.length }
+// {Оля=3, Максим=6} — ключ: елемент, значення: результат лямбди
+
+names2.associateBy { it.first() }
+// {О=Оля, М=Максим} — ключ: результат лямбди, значення: елемент
+</code></pre>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Що станеться при виклику <code>emptyList&lt;Int&gt;().reduce { a, b -&gt; a + b }</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">поверне 0</button>
+    <button class="quiz-option" data-choice="B">кине виняток</button>
+    <button class="quiz-option" data-choice="C">поверне null</button>
+    <button class="quiz-option" data-choice="D">поверне []</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — reduce бере перший елемент як старт, а на порожній колекції першого елемента немає." data-wrong="Ні. Пригадайте пастку вище: reduce не має 'початкового значення на випадок порожньої колекції', на відміну від fold."></p>
+</div>
+
+<div class="quiz" data-correct="C">
+  <p class="quiz-q">Що поверне <code>listOf(listOf(1), listOf(2, 3)).flatMap { it }</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>[[1], [2, 3]]</code></button>
+    <button class="quiz-option" data-choice="B"><code>[1]</code></button>
+    <button class="quiz-option" data-choice="C"><code>[1, 2, 3]</code></button>
+    <button class="quiz-option" data-choice="D"><code>3</code></button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — flatMap склеює всі внутрішні списки в один плаский список." data-wrong="Ні. flatMap саме для того й існує, щоб прибрати вкладеність списків."></p>
+</div>
+
+<div class="callout callout--source">
+  <span class="callout-label">Головне джерело</span>
+  <p><a href="https://kotlinlang.org/docs/collection-transformations.html" target="_blank" rel="noopener">Kotlin Docs: Collection transformations</a> (flatMap, zip, associate) та <a href="https://kotlinlang.org/docs/collection-aggregate.html" target="_blank" rel="noopener">Aggregate operations</a> (fold, reduce). Прямої статті на typealias.com саме про ці функції не знайдено — цей розділ спирається на офіційну документацію.</p>
+</div>
+
+<div class="callout callout--ask">
+  <span class="callout-label">Застрягли?</span>
+  <p>fold/reduce — концептуально найважча тема курсу поки. Якщо логіка "накопичувач + елемент → новий накопичувач" не складається в голові — попросіть викладача/агента розписати покроково один приклад на дошці.</p>
+</div>
+
+<div class="lesson-nav">
+  <a href="0005-poshuk-sortuvannia-ahrehatsiia.html">← Пошук, сортування, агрегація</a>
+  <a href="index.html">Усі уроки</a>
+  <a href="0007-mutable-kolektsii-na-praktytsi.html">Наступний: Mutable колекції на практиці →</a>
+</div>
+
+</main>
+<script src="../../../assets/quiz.js" defer></script>
+</body>
+</html>

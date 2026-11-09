@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Довідка: Функції в Kotlin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Довідка</p>
+  <h1>Функції в Kotlin — шпаргалка</h1>
+  <p class="subtitle">Компактний довідник для швидкого повторення перед іспитом чи практикою.</p>
+</header>
+
+<h2>1. Оголошення функції</h2>
+<pre><code>fun double(x: Int): Int {
+    return 2 * x
+}</code></pre>
+<table>
+  <tr><th>Частина</th><th>Значення</th></tr>
+  <tr><td><code>fun</code></td><td>ключове слово оголошення функції</td></tr>
+  <tr><td><code>double</code></td><td>ім'я функції</td></tr>
+  <tr><td><code>(x: Int)</code></td><td>параметри: <code>ім'я: Тип</code></td></tr>
+  <tr><td><code>: Int</code></td><td>тип значення, яке повертає функція</td></tr>
+</table>
+<div class="callout">Параметри всередині функції — це <code>val</code>: їх не можна переприсвоїти.</div>
+
+<h2>2. Unit — «нічого не повертає»</h2>
+<pre><code>fun printSum(a: Int, b: Int): Unit {
+    println(a + b)
+}
+
+// : Unit можна не писати — це типова поведінка
+fun printSum(a: Int, b: Int) {
+    println(a + b)
+}</code></pre>
+
+<h2>3. Функції-вирази (single-expression)</h2>
+<p>Якщо тіло функції — один вираз, можна опустити фігурні дужки, <code>return</code> і тип повернення (компілятор виведе його сам).</p>
+<pre><code>fun double(x: Int): Int = x * 2
+
+// тип виведено автоматично
+fun double(x: Int) = x * 2</code></pre>
+<div class="warn">Тип можна опустити <strong>тільки</strong> для функцій-виразів (з <code>=</code>). Для функцій із тілом у <code>{ }</code> тип потрібно писати явно (окрім <code>Unit</code>).</div>
+
+<h2>4. Значення за замовчуванням (default arguments)</h2>
+<pre><code>fun read(
+    b: ByteArray,
+    off: Int = 0,
+    len: Int = b.size,
+) { /* ... */ }
+
+read(data)              // off = 0, len = data.size
+read(data, 2)           // off = 2, len = data.size
+read(data, 2, 10)       // усі три задано явно</code></pre>
+<div class="callout">Це заміняє перевантаження функцій (overloading) з інших мов — одна функція замість кількох варіантів з різною кількістю параметрів.</div>
+
+<h2>5. Іменовані аргументи (named arguments)</h2>
+<pre><code>fun reformat(
+    str: String,
+    normalizeCase: Boolean = true,
+    upperCaseFirstLetter: Boolean = true,
+    divideByCamelHumps: Boolean = false,
+    wordSeparator: Char = ' ',
+) { /* ... */ }
+
+reformat(
+    "String!",
+    normalizeCase = false,
+    divideByCamelHumps = true,
+)</code></pre>
+<table>
+  <tr><th>Позиційний виклик</th><th>Іменований виклик</th></tr>
+  <tr><td>порядок аргументів важливий</td><td>порядок можна змінювати</td></tr>
+  <tr><td>незручно з default-параметрами</td><td>можна пропускати будь-які default-параметри</td></tr>
+</table>
+<div class="warn">Не можна змішувати: після першого іменованого аргументу всі наступні теж мають бути іменовані.</div>
+
+<h2>6. Змінна кількість аргументів (vararg)</h2>
+<pre><code>fun &lt;T&gt; asList(vararg ts: T): List&lt;T&gt; {
+    val result = ArrayList&lt;T&gt;()
+    for (t in ts) result.add(t)
+    return result
+}
+
+val list = asList(1, 2, 3)   // [1, 2, 3]</code></pre>
+<p>Усередині функції <code>vararg</code>-параметр поводиться як масив (<code>Array&lt;T&gt;</code>).</p>
+<h3>Spread-оператор *</h3>
+<p>Щоб передати вміст готового масиву у vararg-параметр, використовують <code>*</code>:</p>
+<pre><code>val a = arrayOf(1, 2, 3)
+val list = asList(-1, 0, *a, 4)   // [-1, 0, 1, 2, 3, 4]</code></pre>
+<div class="warn">Без <code>*</code> компілятор спробує передати сам масив як один елемент — і не скомпілюється, якщо типи не збігаються.</div>
+
+<h2>7. Порядок параметрів</h2>
+<div class="callout"><code>vararg</code>-параметр зазвичай ставлять останнім у списку параметрів. Якщо після нього є ще параметри, їх обов'язково потрібно передавати як іменовані аргументи.</div>
+
+<div class="ref-card">
+<h3 style="margin-top:0">Глосарій</h3>
+<dl class="glossary">
+  <dt>параметр (parameter)</dt><dd>змінна, оголошена в сигнатурі функції</dd>
+  <dt>аргумент (argument)</dt><dd>конкретне значення, яке передають у параметр при виклику</dd>
+  <dt>сигнатура функції</dt><dd>ім'я + список параметрів з типами + тип повернення</dd>
+  <dt>default argument</dt><dd>значення параметра за замовчуванням, яке підставляється, якщо аргумент не передано</dd>
+  <dt>named argument</dt><dd>аргумент, переданий через <code>ім'я = значення</code>, незалежно від позиції</dd>
+  <dt>single-expression function</dt><dd>функція без <code>{ }</code>, тіло якої — один вираз після <code>=</code></dd>
+  <dt>vararg</dt><dd>модифікатор параметра, що дозволяє передати довільну кількість аргументів одного типу</dd>
+  <dt>spread-оператор (*)</dt><dd>розгортає масив в окремі аргументи vararg-параметра</dd>
+</dl>
+</div>
+
+<p class="source">Джерело: <a href="https://kotlinlang.org/docs/functions.html" target="_blank" rel="noopener">Kotlin Docs — Functions</a></p>
+
+<a class="index-link" href="../lessons/index.html">← Усі уроки</a>
+</div>
+</body>
+</html>

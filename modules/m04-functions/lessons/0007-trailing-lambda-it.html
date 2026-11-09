@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 7: Trailing lambda та it</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Функції» · Урок 7 з 8 · ~5 хв</p>
+  <h1>Trailing lambda та неявний параметр it</h1>
+  <p class="subtitle">Два синтаксичні скорочення, які роблять виклики з лямбдами коротшими й читабельнішими.</p>
+</header>
+
+<h2>1. Trailing lambda</h2>
+<p>Коли лямбда — <strong>останній</strong> аргумент функції, її можна винести за дужки виклику:</p>
+<pre><code>fun repeatAction(times: Int, action: (Int) -> Unit) {
+    for (i in 1..times) action(i)
+}
+
+// звичайний виклик
+repeatAction(3, { i -> println("Ітерація $i") })
+
+// trailing lambda — те саме, читається краще
+repeatAction(3) { i -> println("Ітерація $i") }</code></pre>
+<p>Якщо лямбда — <strong>єдиний</strong> аргумент, круглі дужки можна прибрати повністю.</p>
+
+<h2>2. Неявний параметр it</h2>
+<p>Якщо лямбда приймає рівно один параметр, його ім'я можна не писати — Kotlin автоматично називає його <code>it</code>:</p>
+<pre><code>repeatAction(3) { println("Ітерація $it") }</code></pre>
+<div class="warn"><code>it</code> працює тільки для лямбд з одним параметром. Для двох і більше параметрів імена потрібно писати явно (як у <code>{ x, y -> x + y }</code>).</div>
+
+<div class="quiz" data-answer="repeatAction(5) { println(it) }">
+  <div class="q">Перепишіть коротше, з trailing lambda та <code>it</code>: <code>repeatAction(5, { i -> println(i) })</code></div>
+  <input type="text" placeholder="repeatAction(5) { ... }">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="ні">
+  <div class="q">Чи можна використати <code>it</code> у лямбді з двома параметрами, наприклад <code>{ x, y -> x + y }</code>? (так/ні)</div>
+  <input type="text" placeholder="так або ні">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+<p>Замініть <code>times</code> на 5 та подивіться, як зміниться вивід.</p>
+<div class="playground-embed"><iframe src="https://pl.kotl.in/olsq9bDcv" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/olsq9bDcv" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<h2>Довідка</h2>
+<p>Синтаксис і глосарій — у довіднику <a href="../reference/0002-lyambdy-ta-funktsii-vyshchoho-poryadku.html">«Лямбди та функції вищого порядку»</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0006-funktsii-vyshchoho-poryadku.html">← Попередній урок</a> · <a href="0008-posylannya-na-funktsii.html">Наступний урок: Посилання на функції →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

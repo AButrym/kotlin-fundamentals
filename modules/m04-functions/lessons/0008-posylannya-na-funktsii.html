@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 8: Посилання на функції</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Функції» · Урок 8 з 8 · ~5 хв</p>
+  <h1>Посилання на функції (::)</h1>
+  <p class="subtitle">Якщо потрібна функція вже існує — не пишіть лямбду заново, передайте посилання на неї.</p>
+</header>
+
+<h2>1. Проблема</h2>
+<p>Уявіть, що функція <code>isEven</code> уже написана:</p>
+<pre><code>fun isEven(n: Int) = n % 2 == 0</code></pre>
+<p>Якщо десь потрібна лямбда типу <code>(Int) -> Boolean</code>, можна написати обгортку:</p>
+<pre><code>check(4, { n -> isEven(n) })</code></pre>
+<p>Але це зайвий код — <code>isEven</code> вже має потрібний тип.</p>
+
+<h2>2. Оператор ::</h2>
+<p>Замість обгортки можна передати <strong>посилання на функцію</strong> через <code>::</code>:</p>
+<pre><code>check(4, ::isEven)</code></pre>
+<p>Це працює, бо <code>isEven</code> має тип <code>(Int) -> Boolean</code> — точнісінько той, якого очікує <code>check</code>.</p>
+
+<h2>3. Посилання як значення</h2>
+<p>Посилання можна й зберегти у змінну — так само, як лямбду:</p>
+<pre><code>val check: (Int) -> Boolean = ::isEven
+check(4)  // true</code></pre>
+
+<div class="callout">Правило вибору: пишіть лямбду <code>{ }</code>, коли логіка коротка й потрібна лише тут. Використовуйте <code>::ім'я</code>, коли потрібна функція вже існує окремо.</div>
+
+<div class="warn">Посилання на методи конкретних об'єктів (<code>foo::toString</code>) і на конструктори (<code>::ClassName</code>) працюють за тим самим принципом — до них повернемось, коли розглянемо класи.</div>
+
+<div class="quiz" data-answer="check(4, ::isEven)">
+  <div class="q">Перепишіть коротше через посилання на функцію: <code>check(4, { n -> isEven(n) })</code></div>
+  <input type="text" placeholder="check(4, ...)">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="::">
+  <div class="q">Який оператор перетворює ім'я вже оголошеної функції на посилання, яке можна передати як аргумент?</div>
+  <input type="text" placeholder="символи">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+<p>Додайте свою функцію-предикат (наприклад, <code>isPositive</code>) і передайте її посиланням у <code>check</code>.</p>
+<div class="playground-embed"><iframe src="https://pl.kotl.in/l3vlBHcZZ" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/l3vlBHcZZ" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<div class="ok">
+Модуль завершено. Ви пройшли шлях від звичайного оголошення функції до передавання функцій як значень — це основа для роботи з колекціями (<code>map</code>, <code>filter</code> тощо), яку розглянемо в наступних темах.
+</div>
+
+<h2>Довідка</h2>
+<p>Синтаксис і глосарій — у довіднику <a href="../reference/0002-lyambdy-ta-funktsii-vyshchoho-poryadku.html">«Лямбди та функції вищого порядку»</a>. Першоджерело: <a href="https://kotlinlang.org/docs/lambdas.html#function-references" target="_blank" rel="noopener">Kotlin Docs — Function references</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0007-trailing-lambda-it.html">← Попередній урок</a> · <a href="index.html">До переліку уроків</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

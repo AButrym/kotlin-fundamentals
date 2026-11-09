@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 11: Клас Matrix та оператор індексації</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Цикли та масиви» · Урок 11 з 13 · ~9 хв</p>
+  <h1>Клас Matrix та оператор індексації</h1>
+  <p class="subtitle">Мінімум про методи класу та operator get/set.</p>
+</header>
+
+<div class="callout"><strong>Мініатюрний вступ про методи.</strong> Ви бачили класи з полями. Клас може також містити <strong>методи</strong> — функції, оголошені всередині класу; вони мають доступ до полів. Докладно — у модулі «Класи» (<a href="../../../glossary/index.html#method">метод</a>, <a href="../../../glossary/index.html#class">клас</a>); нам потрібне лише це:</div>
+
+<pre><code>class Counter {
+    var value = 0
+    fun increment() {       // метод
+        value++
+    }
+}
+
+val c = Counter()
+c.increment()
+println(c.value)            // 1</code></pre>
+
+<h2>1. Мета: m[r, c] замість data[r * cols + c]</h2>
+
+<p>Сховаємо формулу страйда в класі. Методи зі спеціальними іменами <code>get</code> і <code>set</code>, позначені словом <code>operator</code>, дозволяють компілятору перекладати квадратні дужки в їхні виклики (<a href="../../../glossary/index.html#operator-get-set">оператор індексації</a>):</p>
+
+<table>
+  <tr><th>Ви пишете</th><th>Компілятор розуміє як</th></tr>
+  <tr><td><code>m[r, c]</code></td><td><code>m.get(r, c)</code></td></tr>
+  <tr><td><code>m[r, c] = v</code></td><td><code>m.set(r, c, v)</code></td></tr>
+  <tr><td><code>m[r, c] += 1</code></td><td><code>m.set(r, c, m.get(r, c) + 1)</code></td></tr>
+</table>
+
+<h2>2. Клас Matrix</h2>
+
+<pre><code>class Matrix(val rows: Int, val cols: Int) {
+    private val data = IntArray(rows * cols)
+
+    operator fun get(row: Int, col: Int): Int {
+        return data[row * cols + col]
+    }
+
+    operator fun set(row: Int, col: Int, value: Int) {
+        data[row * cols + col] = value
+    }
+}
+
+val m = Matrix(3, 4)
+m[1, 2] = 7
+m[1, 2] += 1
+println(m[1, 2])     // 8</code></pre>
+
+<ul>
+  <li><code>rows</code> і <code>cols</code> у дужках після імені класу — поля, задані при створенні <code>Matrix(3, 4)</code>.</li>
+  <li><code>private</code> ховає масив <code>data</code> від зовнішнього коду: користуватися матрицею можна лише через <code>m[r, c]</code>.</li>
+  <li>Усередині класу формула <code>row * cols + col</code> написана <strong>один раз</strong> — менше шансів помилитись.</li>
+</ul>
+
+<div class="quiz" data-answer="11">
+  <div class="q">У <code>Matrix(3, 4)</code> який індекс у <code>data</code> має виклик <code>m[2, 3]</code>?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>3. Перевірка меж</h2>
+
+<p>Пригадайте пастку з уроку 10: <code>(0, 5)</code> у матриці з 4 стовпцями мовчки читає клітинку <code>(1, 1)</code>. Додамо перевірку функцією <code>require</code>: якщо умова хибна, вона зупиняє програму з поясненням.</p>
+
+<pre><code>class Matrix(val rows: Int, val cols: Int) {
+    private val data = IntArray(rows * cols)
+
+    private fun checkBounds(row: Int, col: Int) {
+        require(row in 0 until rows &amp;&amp; col in 0 until cols) {
+            "($row, $col) поза межами матриці ${rows}x$cols"
+        }
+    }
+
+    operator fun get(row: Int, col: Int): Int {
+        checkBounds(row, col)
+        return data[row * cols + col]
+    }
+
+    operator fun set(row: Int, col: Int, value: Int) {
+        checkBounds(row, col)
+        data[row * cols + col] = value
+    }
+}</code></pre>
+
+<p>Повідомлення в фігурних дужках після <code>require</code> — <a href="../../../glossary/index.html#lambda">лямбда</a> (її виконують, лише якщо перевірка не пройшла).</p>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Яка перевага <code>m[r, c]</code> над <code>data[r * cols + c]</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">Працює швидше</button>
+    <button class="quiz-option" data-choice="B">Формула та перевірки меж зібрані в одному місці</button>
+    <button class="quiz-option" data-choice="C">Матриця стає зубчастою</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: код користувача читається як математика, а помилки ловляться в одному класі." data-wrong="Ні: швидкість та сама, форма матриці не змінюється — виграш у зручності й безпеці."></p>
+</div>
+
+<h2>4. Практика</h2>
+
+<div class="callout">Додайте до <code>Matrix</code> метод <code>fun fill(value: Int)</code>, який заповнює всю матрицю одним значенням (цикл по <code>data.indices</code>). Потім заповніть матрицю 3×4 значеннями <code>r * 10 + c</code> вкладеними циклами через <code>m[r, c] = …</code>.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-embed"><iframe src="https://pl.kotl.in/sn_fetmDC?theme=darcula" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/sn_fetmDC?theme=darcula" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0003-alhorytmy-strajdy-pyatnashky.html">«Алгоритми, страйди, П’ятнашки — шпаргалка»</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0010-strajdy.html">← Попередній урок</a> · <a href="0012-pyatnashky-inversii.html">Наступний урок: П’ятнашки: інверсії та розв’язуваність →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

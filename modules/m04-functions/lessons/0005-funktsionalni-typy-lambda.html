@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 5: Функціональні типи та лямбда-вирази</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Функції» · Урок 5 з 8 · ~6 хв</p>
+  <h1>Функціональні типи та лямбда-вирази</h1>
+  <p class="subtitle">У Kotlin функцію можна зберегти у змінну — так само, як число чи рядок. Це відкриває двері до лямбд.</p>
+</header>
+
+<h2>1. Функція як значення</h2>
+<p>Досі функції існували самі по собі — ви їх оголошували через <code>fun</code> і викликали за іменем. Але функцію можна також покласти у змінну. Для цього потрібен <strong>функціональний тип</strong> — опис «які параметри приймає й що повертає»:</p>
+<pre><code>(Int, Int) -> Int</code></pre>
+<p>Читається: «функція, що приймає два <code>Int</code> і повертає <code>Int</code>».</p>
+
+<h2>2. Лямбда-вираз</h2>
+<p>Лямбда — це сама функція без імені, записана як значення:</p>
+<pre><code>val sum: (Int, Int) -> Int = { x: Int, y: Int -> x + y }
+
+sum(2, 3)  // 5</code></pre>
+<p>Все, що між <code>{ }</code> до стрілки <code>-></code> — параметри. Після стрілки — тіло (останній вираз — результат, без <code>return</code>).</p>
+
+<h2>3. Виведення типів</h2>
+<p>Якщо тип змінної вже вказано зліва, типи параметрів лямбди можна не дублювати:</p>
+<pre><code>val sum: (Int, Int) -> Int = { x, y -> x + y }</code></pre>
+
+<h2>4. Лямбда без параметрів</h2>
+<pre><code>val sayHi: () -> Unit = { println("Привіт!") }
+sayHi()</code></pre>
+
+<div class="quiz" data-answer="(String) -> Int">
+  <div class="q">Який функціональний тип опише функцію, що приймає один <code>String</code> і повертає <code>Int</code>?</div>
+  <input type="text" placeholder="(...) -> ...">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="val isEven: (Int) -> Boolean = { n -> n % 2 == 0 }">
+  <div class="q">Напишіть лямбду <code>isEven</code> типу <code>(Int) -> Boolean</code>, яка перевіряє, чи число парне.</div>
+  <input type="text" placeholder="val isEven: (Int) -> Boolean = ...">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+<p>Додайте свою лямбду типу <code>(Int) -> Int</code>, наприклад квадрат числа, і виведіть результат.</p>
+<div class="playground-embed"><iframe src="https://pl.kotl.in/kBUlH7-9U" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/kBUlH7-9U" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<h2>Довідка</h2>
+<p>Синтаксис і глосарій — у довіднику <a href="../reference/0002-lyambdy-ta-funktsii-vyshchoho-poryadku.html">«Лямбди та функції вищого порядку»</a>. Першоджерело: <a href="https://kotlinlang.org/docs/lambdas.html" target="_blank" rel="noopener">Kotlin Docs — Higher-order functions and lambdas</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0004-vararg.html">← Попередній урок</a> · <a href="0006-funktsii-vyshchoho-poryadku.html">Наступний урок: Функції вищого порядку →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

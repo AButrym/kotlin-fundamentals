@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kotlin Collections — Глосарій</title>
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<main>
+
+<a class="back-link" href="../lessons/index.html">← Усі уроки</a>
+<p class="eyebrow">Довідник</p>
+<h1>Глосарій: Kotlin Collections</h1>
+<p>Канонічні означення термінів курсу. У всіх уроках вживаються саме ці слова — якщо десь трапляється синонім, вважайте його неточністю.</p>
+
+<h2>Типи колекцій</h2>
+
+<p><strong>Колекція (Collection)</strong><br>
+Структура даних, що зберігає групу елементів одного типу і дозволяє працювати з ними як з єдиним цілим.</p>
+
+<p><strong>List</strong><br>
+Впорядкована колекція, що дозволяє дублікати елементів і доступ за індексом. Read-only інтерфейс — без методів зміни.<br>
+<em>Уточнення:</em> read-only не означає, що обʼєкт у пам'яті незмінний — див. <strong>Аліасинг</strong>.</p>
+
+<p><strong>MutableList</strong><br>
+<code>List</code> плюс методи зміни: <code>add()</code>, <code>remove()</code>, <code>removeAt()</code>, <code>clear()</code>.</p>
+
+<p><strong>Set</strong><br>
+Колекція, де кожен елемент унікальний (дублікати автоматично відкидаються). У Kotlin за замовчуванням зберігає порядок додавання.</p>
+
+<p><strong>MutableSet</strong><br>
+<code>Set</code> плюс методи зміни: <code>add()</code>, <code>remove()</code>, <code>clear()</code>.</p>
+
+<p><strong>Map</strong><br>
+Колекція пар "ключ → значення", де кожен ключ унікальний. Не плутати з функцією <code>map()</code> (див. нижче) — назва одна, суть різна.</p>
+
+<p><strong>MutableMap</strong><br>
+<code>Map</code> плюс методи зміни: <code>put()</code>, оператор <code>[key] = value</code>, <code>remove()</code>.</p>
+
+<h2>Функції над колекціями</h2>
+
+<p><strong>map() (функція)</strong><br>
+Застосовує лямбду до кожного елемента колекції й повертає нову колекцію того самого розміру з результатами.<br>
+<em>Avoid:</em> "перетворення" без уточнення, коли поруч є тип <code>Map</code> — плутає новачків.</p>
+
+<p><strong>filter() / filterNot()</strong><br>
+Повертає підмножину елементів, для яких лямбда-умова істинна (<code>filter</code>) або хибна (<code>filterNot</code>). Результат може бути меншим за оригінал.</p>
+
+<p><strong>forEach()</strong><br>
+Виконує дію для кожного елемента, не повертаючи нової колекції. Заміна циклу <code>for</code>, коли результат не потрібен.</p>
+
+<p><strong>find() / firstOrNull()</strong><br>
+Повертають перший елемент, що підходить під умову, або <code>null</code>, якщо такого немає. <code>first()</code> (без Null) натомість кидає виняток.</p>
+
+<p><strong>sortedBy() / sortedByDescending()</strong><br>
+Повертають новий список, впорядкований за значенням, яке обчислює лямбда — за зростанням або спаданням відповідно.</p>
+
+<p><strong>Агрегація (aggregate)</strong><br>
+Загальна назва операцій, що "стискають" колекцію в одне значення: <code>count()</code>, <code>sum()</code>, <code>average()</code>, <code>maxOrNull()</code>, <code>minOrNull()</code>.</p>
+
+<p><strong>groupBy()</strong><br>
+Розкладає колекцію на <code>Map&lt;K, List&lt;V&gt;&gt;</code>: ключ — результат лямбди, значення — список усіх елементів з цим результатом.</p>
+
+<p><strong>fold()</strong><br>
+Загальний спосіб звести колекцію до одного значення за явно вказаним стартовим значенням і функцією "накопичувач + елемент → новий накопичувач". Безпечний для порожньої колекції.</p>
+
+<p><strong>reduce()</strong><br>
+Те саме, що <code>fold()</code>, але без явного стартового значення — бере перший елемент колекції як старт. Кидає виняток на порожній колекції.</p>
+
+<p><strong>flatMap()</strong><br>
+Комбінація <code>map()</code> і "розплощення": застосовує лямбду, що повертає колекцію для кожного елемента, і склеює всі результати в один плаский список.</p>
+
+<p><strong>zip()</strong><br>
+З'єднує дві колекції в список пар <code>Pair</code>, по позиції.</p>
+
+<p><strong>associate() / associateWith() / associateBy()</strong><br>
+Перетворюють колекцію на <code>Map</code>: <code>associateWith</code> — елемент стає ключем, лямбда дає значення; <code>associateBy</code> — навпаки.</p>
+
+<h2>Практика та типові пастки</h2>
+
+<p><strong>Аліасинг (aliasing)</strong><br>
+Ситуація, коли дві змінні вказують на один і той самий обʼєкт колекції в пам'яті. Зміна через одну змінну видима через іншу.<br>
+<em>Avoid:</em> "копіювання посилання" як синонім справжньої копії — це протилежні речі.</p>
+
+<p><strong>Копія (copy)</strong><br>
+Новий, незалежний обʼєкт колекції з тим самим вмістом. Отримується через <code>toList()</code>, <code>toMutableList()</code>, <code>toSet()</code>, <code>toMap()</code>.</p>
+
+<p><strong>Builder-функція</strong><br>
+Функція виду <code>buildList { }</code>, <code>buildSet { }</code>, <code>buildMap { }</code>: усередині лямбди колекція мутабельна, назовні повертається готовий read-only результат.</p>
+
+<h2>Sequences</h2>
+
+<p><strong>Sequence</strong><br>
+Тип колекції з лінивою (по одному елементу через увесь ланцюжок) обробкою, без створення проміжних колекцій на кожному кроці.</p>
+
+<p><strong>Intermediate операція</strong><br>
+Операція на <code>Sequence</code> (наприклад <code>map</code>, <code>filter</code>), яка лише описує крок обробки й сама по собі нічого не обчислює.</p>
+
+<p><strong>Terminal операція</strong><br>
+Операція на <code>Sequence</code> (наприклад <code>toList()</code>, <code>first()</code>, <code>sum()</code>), яка запускає фактичне обчислення всього ланцюжка.</p>
+
+</main>
+</body>
+</html>

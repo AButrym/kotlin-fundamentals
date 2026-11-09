@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 4: Діапазони та цикл for</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Цикли та масиви» · Урок 4 з 13 · ~8 хв</p>
+  <h1>Діапазони та цикл for</h1>
+  <p class="subtitle">..&lt;, until, downTo, step.</p>
+</header>
+
+<h2>1. Діапазон і цикл for</h2>
+
+<p><a href="../../../glossary/index.html#range">Діапазон</a> — це послідовність значень від початку до кінця. Цикл <code>for</code> перебирає її по одному значенню:</p>
+
+<pre><code>for (i in 1..5) {
+    print("$i ")      // 1 2 3 4 5
+}</code></pre>
+
+<p>Змінна <code>i</code> оголошується самим циклом, і в кожній ітерації вона дорівнює наступному значенню діапазону.</p>
+
+<table>
+  <tr><th>Запис</th><th>Значення</th><th>Примітка</th></tr>
+  <tr><td><code>1..5</code></td><td>1 2 3 4 5</td><td>кінець <strong>включно</strong></td></tr>
+  <tr><td><code>1 until 5</code></td><td>1 2 3 4</td><td>кінець <strong>не</strong> входить</td></tr>
+  <tr><td><code>1..&lt;5</code></td><td>1 2 3 4</td><td>те саме, що <code>until</code>, оператор (Kotlin 1.9+)</td></tr>
+  <tr><td><code>5 downTo 1</code></td><td>5 4 3 2 1</td><td>у зворотному напрямку</td></tr>
+  <tr><td><code>1..10 step 3</code></td><td>1 4 7 10</td><td>крок; має бути додатним</td></tr>
+  <tr><td><code>10 downTo 0 step 5</code></td><td>10 5 0</td><td>спадання з кроком</td></tr>
+  <tr><td><code>(1..5).reversed()</code></td><td>5 4 3 2 1</td><td>переворот наявного діапазону</td></tr>
+</table>
+
+<div class="quiz" data-answer="4">
+  <div class="q">Скільки ітерацій виконає <code>for (i in 1 until 5)</code>?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="callout">Типовий вибір для проходу по індексах масиву розміру <code>n</code> — <code>0 until n</code> (або <code>0..&lt;n</code>): останній індекс <code>n</code> не входить.</div>
+
+<h2>2. Порожній діапазон</h2>
+
+<div class="warn"><code>5..1</code> — <strong>порожній</strong> діапазон: <code>..</code> завжди рахує вгору. Цикл просто не виконається, помилки не буде. Для спадання пишіть <code>5 downTo 1</code>.</div>
+
+<div class="quiz" data-answer="0">
+  <div class="q">Скільки ітерацій виконає <code>for (i in 5..1)</code>?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>3. Перевірка належності</h2>
+
+<p>Діапазон — не лише для циклів. Оператори <code>in</code> та <code>!in</code> перевіряють, чи потрапляє значення в діапазон. Працює й для символів:</p>
+
+<pre><code>val x = 7
+println(x in 1..10)         // true
+println(x !in 1..10)        // false
+println('x' in 'a'..'z')    // true
+
+for (ch in 'a'..'e') print(ch)   // abcde</code></pre>
+
+<div class="quiz" data-correct="A">
+  <p class="quiz-q">Яка послідовність <code>10 downTo 1 step 3</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">10, 7, 4, 1</button>
+    <button class="quiz-option" data-choice="B">10, 7, 4</button>
+    <button class="quiz-option" data-choice="C">10, 6, 2</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: від 10 вниз із кроком 3, поки не вийдемо за 1." data-wrong="Ні: 10, 7, 4, 1 — крок 3 від 10 вниз, і значення 1 ще входить."></p>
+</div>
+
+<h2>4. Практика</h2>
+
+<div class="callout">Виведіть у рядок числа <code>10, 8, 6, 4, 2, 0</code> одним циклом <code>for</code>. Потім — літери від <code>'z'</code> до <code>'u'</code> у зворотному порядку.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-embed"><iframe src="https://pl.kotl.in/lL2ijfdLo?theme=darcula" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/lL2ijfdLo?theme=darcula" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0002-diapazony-ta-tsykly.html">«Діапазони та цикли — шпаргалка»</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0003-vkladeni-masyvy.html">← Попередній урок</a> · <a href="0005-iteratsiya-po-masyvu.html">Наступний урок: Ітерація по масиву та матриці →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

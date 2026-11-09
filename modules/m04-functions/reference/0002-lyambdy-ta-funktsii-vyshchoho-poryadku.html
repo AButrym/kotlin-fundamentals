@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Довідка: Лямбди та функції вищого порядку</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Довідка</p>
+  <h1>Лямбди та функції вищого порядку — шпаргалка</h1>
+  <p class="subtitle">Продовження довідки «Функції» — функції як значення.</p>
+</header>
+
+<h2>1. Функціональний тип</h2>
+<pre><code>() -> Unit              // без параметрів, нічого не повертає
+(Int) -> String          // один параметр Int, повертає String
+(Int, Int) -> Int        // два параметри, повертає Int
+((Int, Int) -> Int)?     // nullable функціональний тип</code></pre>
+
+<h2>2. Лямбда-вираз</h2>
+<pre><code>val sum: (Int, Int) -> Int = { x: Int, y: Int -> x + y }
+val sum2 = { x: Int, y: Int -> x + y }   // тип виведено автоматично
+
+sum(2, 3)  // 5</code></pre>
+<table>
+  <tr><th>Частина</th><th>Значення</th></tr>
+  <tr><td>до <code>-></code></td><td>параметри лямбди</td></tr>
+  <tr><td>після <code>-></code></td><td>тіло; останній вираз — результат (без <code>return</code>)</td></tr>
+</table>
+
+<h2>3. Функція вищого порядку</h2>
+<p>Функція, що приймає іншу функцію як параметр (або повертає функцію):</p>
+<pre><code>fun operate(a: Int, b: Int, op: (Int, Int) -> Int): Int {
+    return op(a, b)
+}
+
+operate(3, 4, { x, y -> x + y })  // 7</code></pre>
+
+<h2>4. Trailing lambda</h2>
+<p>Якщо лямбда — останній аргумент, її виносять за дужки виклику:</p>
+<pre><code>operate(3, 4) { x, y -> x + y }
+
+// якщо лямбда — єдиний аргумент, дужки прибирають повністю
+run { println("Привіт") }</code></pre>
+
+<h2>5. Неявний параметр it</h2>
+<p>Для лямбди з <strong>одним</strong> параметром ім'я можна не писати:</p>
+<pre><code>repeatAction(3) { println(it) }</code></pre>
+<div class="warn">Працює лише для одного параметра. Для двох і більше — імена обов'язкові.</div>
+
+<h2>6. Посилання на функцію (::)</h2>
+<pre><code>fun isEven(n: Int) = n % 2 == 0
+
+check(4, ::isEven)                       // замість { n -> isEven(n) }
+val ref: (Int) -> Boolean = ::isEven     // можна зберегти в змінну</code></pre>
+<table>
+  <tr><th>Вид посилання</th><th>Приклад</th><th>Коли</th></tr>
+  <tr><td>на функцію верхнього рівня</td><td><code>::isEven</code></td><td>функція оголошена поза класом</td></tr>
+  <tr><td>bound-посилання на метод об'єкта</td><td><code>foo::toString</code></td><td>розглянемо разом з класами</td></tr>
+  <tr><td>на конструктор</td><td><code>::ClassName</code></td><td>розглянемо разом з класами</td></tr>
+</table>
+
+<div class="ref-card">
+<h3 style="margin-top:0">Глосарій</h3>
+<dl class="glossary">
+  <dt>функціональний тип (function type)</dt><dd>тип, що описує сигнатуру функції: <code>(A, B) -> C</code></dd>
+  <dt>лямбда-вираз (lambda expression)</dt><dd>функція без імені, записана як значення: <code>{ x -> x + 1 }</code></dd>
+  <dt>функція вищого порядку (higher-order function)</dt><dd>функція, що приймає функцію як параметр або повертає функцію</dd>
+  <dt>trailing lambda</dt><dd>синтаксис, що дозволяє винести лямбду-останній-аргумент за дужки виклику</dd>
+  <dt>it</dt><dd>неявне ім'я єдиного параметра лямбди, коли ім'я не вказано явно</dd>
+  <dt>посилання на функцію (function reference)</dt><dd>оператор <code>::</code>, що перетворює наявну функцію на значення функціонального типу</dd>
+</dl>
+</div>
+
+<p class="source">Джерело: <a href="https://kotlinlang.org/docs/lambdas.html" target="_blank" rel="noopener">Kotlin Docs — Higher-order functions and lambdas</a></p>
+
+<p><a href="0001-funktsii-kotlin.html">← Довідка «Функції в Kotlin»</a></p>
+<a class="index-link" href="../lessons/index.html">← Усі уроки</a>
+</div>
+</body>
+</html>

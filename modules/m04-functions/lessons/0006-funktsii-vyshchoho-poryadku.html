@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 6: Функції вищого порядку</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Функції» · Урок 6 з 8 · ~6 хв</p>
+  <h1>Функції вищого порядку</h1>
+  <p class="subtitle">Функція, яка приймає іншу функцію як параметр (або повертає функцію), — вища порядком.</p>
+</header>
+
+<h2>1. Функція як параметр</h2>
+<p>Раз лямбду можна покласти у змінну, її можна передати і як аргумент — параметр просто оголошується з функціональним типом:</p>
+<pre><code>fun operate(a: Int, b: Int, op: (Int, Int) -> Int): Int {
+    return op(a, b)
+}</code></pre>
+<p><code>op</code> — параметр-функція: щось, що приймає два <code>Int</code> і повертає <code>Int</code>. Усередині <code>operate</code> її викликають так само, як звичайну функцію: <code>op(a, b)</code>.</p>
+
+<h2>2. Виклик з різними лямбдами</h2>
+<pre><code>val sum = { x: Int, y: Int -> x + y }
+val times = { x: Int, y: Int -> x * y }
+
+operate(3, 4, sum)    // 7
+operate(3, 4, times)  // 12
+operate(3, 4, { x, y -> x - y })  // 1 — лямбду можна писати і прямо тут</code></pre>
+<div class="callout">Одна й та сама функція <code>operate</code> поводиться по-різному залежно від того, яку лямбду їй передали — логіку не потрібно дублювати чи розгалужувати через <code>if</code>.</div>
+
+<div class="quiz" data-answer="fun check(x: Int, predicate: (Int) -> Boolean): Boolean = predicate(x)">
+  <div class="q">Напишіть функцію-вираз <code>check(x: Int, predicate: (Int) -> Boolean): Boolean</code>, яка викликає <code>predicate</code> над <code>x</code> і повертає результат.</div>
+  <input type="text" placeholder="fun check(x: Int, predicate: (Int) -> Boolean): Boolean = ...">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="7">
+  <div class="q">Що поверне <code>operate(3, 4, sum)</code> з прикладу вище?</div>
+  <input type="text" placeholder="число">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+<p>Додайте власну лямбду (наприклад, ділення) і передайте її в <code>operate</code>.</p>
+<div class="playground-embed"><iframe src="https://pl.kotl.in/W54IqLjtJ" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/W54IqLjtJ" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<h2>Довідка</h2>
+<p>Синтаксис і глосарій — у довіднику <a href="../reference/0002-lyambdy-ta-funktsii-vyshchoho-poryadku.html">«Лямбди та функції вищого порядку»</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0005-funktsionalni-typy-lambda.html">← Попередній урок</a> · <a href="0007-trailing-lambda-it.html">Наступний урок: Trailing lambda та it →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

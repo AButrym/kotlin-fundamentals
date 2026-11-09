@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Підсумкова практика: колекції разом</title>
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<main>
+
+<a class="back-link" href="index.html">← Усі уроки</a>
+<p class="eyebrow">Kotlin Collections · Урок 9 з 9</p>
+<h1>Підсумкова практика: колекції разом</h1>
+
+<div class="callout callout--known">
+  <span class="callout-label">Що ви вже знаєте</span>
+  <p>Ви пройшли весь курс: List/Set/Map, map/filter/forEach, сортування й агрегацію, fold/reduce/flatMap/zip, mutable-пастки та Sequences. Цей урок нічого нового не пояснює — він перемішує все, щоб перевірити, чи тримається матеріал разом, а не тільки "по одному уроку за раз".</p>
+</div>
+
+<p>Один наскрізний приклад: чек із покупками.</p>
+
+<pre><code>data class Purchase(val item: String, val price: Int, val category: String)
+
+val receipt = listOf(
+    Purchase("хліб", 35, "їжа"),
+    Purchase("молоко", 42, "їжа"),
+    Purchase("зошит", 28, "канцелярія"),
+    Purchase("ручка", 15, "канцелярія"),
+    Purchase("молоко", 42, "їжа")
+)
+</code></pre>
+
+<h2>Спробуйте самостійно</h2>
+
+<p>Перш ніж дивитись підказки нижче — спробуйте написати код для кожної задачі у <a href="https://play.kotlinlang.org/" target="_blank" rel="noopener">Kotlin Playground</a> (офіційний онлайн-редактор Kotlin, не потребує встановлення).</p>
+
+<ol>
+  <li>Загальна сума чека (<em>підказка: агрегація з уроку 5, або fold з уроку 6</em>).</li>
+  <li>Список унікальних категорій товарів у чеку (<em>підказка: урок 3 + урок 4 — трансформація в Set</em>).</li>
+  <li>Товари, згруповані по категорії (<em>підказка: урок 5</em>).</li>
+  <li>Мапа "назва товару → ціна", без дублікатів назв (<em>підказка: урок 6, associateWith чи associate</em>).</li>
+  <li>Найдорожчий товар у чеку (<em>підказка: урок 5, maxByOrNull</em>).</li>
+  <li>Якщо цей список товарів прийшов з бази даних на мільйон рядків і потрібно лише перший товар дорожчий за 1000 — чи використали б ви <code>List</code> чи <code>Sequence</code>? Чому? (<em>підказка: урок 8</em>).</li>
+</ol>
+
+<div class="callout callout--pitfall">
+  <span class="callout-label">Самоперевірка</span>
+  <p>Один із варіантів рішення (спробуйте спочатку самі, потім порівняйте):</p>
+  <pre><code>val total = receipt.sumOf { it.price }                       // 1.
+val categories = receipt.map { it.category }.toSet()          // 2.
+val byCategory = receipt.groupBy { it.category }               // 3.
+val priceByItem = receipt.associate { it.item to it.price }    // 4.
+val mostExpensive = receipt.maxByOrNull { it.price }            // 5.
+// 6. Sequence — через розмір даних (мільйон) і зупинку на першому знайденому</code></pre>
+</div>
+
+<h2>Змішана перевірка (усі теми разом)</h2>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">У <code>receipt</code> вище скільки унікальних <em>назв</em> товарів (не категорій)?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">5</button>
+    <button class="quiz-option" data-choice="B">4</button>
+    <button class="quiz-option" data-choice="C">2</button>
+    <button class="quiz-option" data-choice="D">3</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — 'молоко' зустрічається двічі, тож унікальних назв 4: хліб, молоко, зошит, ручка." data-wrong="Ні. Перерахуйте: хліб, молоко, зошит, ручка, молоко — скільки РІЗНИХ назв?"></p>
+</div>
+
+<div class="quiz" data-correct="C">
+  <p class="quiz-q">Який тип матиме <code>receipt.groupBy { it.category }</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>List&lt;Purchase&gt;</code></button>
+    <button class="quiz-option" data-choice="B"><code>Set&lt;String&gt;</code></button>
+    <button class="quiz-option" data-choice="C"><code>Map&lt;String, List&lt;Purchase&gt;&gt;</code></button>
+    <button class="quiz-option" data-choice="D"><code>Int</code></button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — groupBy завжди Map, ключ від лямбди, значення — список елементів з тим ключем." data-wrong="Ні. Пригадайте урок 5: groupBy повертає саме мапу, а не список."></p>
+</div>
+
+<div class="quiz" data-correct="A">
+  <p class="quiz-q">Якщо <code>val copy = receipt.toMutableList()</code>, а потім <code>copy.add(...)</code> — чи зміниться оригінальний <code>receipt</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">Ні, це незалежна копія</button>
+    <button class="quiz-option" data-choice="B">Так, вони одне й те саме</button>
+    <button class="quiz-option" data-choice="C">Так, але тільки категорії</button>
+    <button class="quiz-option" data-choice="D">Виникне помилка компіляції</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — toMutableList() з уроку 7 створює новий, незалежний обʼєкт." data-wrong="Ні. Пригадайте урок 7: toMutableList() — це саме той спосіб уникнути аліасингу."></p>
+</div>
+
+<h2>Куди далі</h2>
+
+<p>Цей курс дав робочу основу: створення й вибір правильної колекції, основні та просунуті функціональні операції, типові пастки з mutable-колекціями, і коли варто сягнути по Sequences. Природні наступні кроки — власні generic-класи, робота з <code>null</code> у колекціях (<code>filterNotNull</code>, <code>mapNotNull</code>) та корутини для асинхронної обробки даних.</p>
+
+<div class="callout callout--ask">
+  <span class="callout-label">Питання після курсу?</span>
+  <p>Якщо якась із задач вище не піддається — це нормальний сигнал, який саме урок варто переглянути ще раз. Розкажіть викладачу/агенту, на якому кроці застрягли, і разом розберете конкретний приклад.</p>
+</div>
+
+<div class="lesson-nav">
+  <a href="0008-vstup-do-sequences.html">← Вступ до Sequences</a>
+  <a href="index.html">Усі уроки</a>
+  <span></span>
+</div>
+
+</main>
+<script src="../../../assets/quiz.js" defer></script>
+</body>
+</html>
