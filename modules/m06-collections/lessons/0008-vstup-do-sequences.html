@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вступ до Sequences</title>
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<main>
+
+<a class="back-link" href="index.html">← Усі уроки</a>
+<p class="eyebrow">Kotlin Collections · Урок 8 з 9</p>
+<h1>Вступ до Sequences</h1>
+
+<div class="callout callout--known">
+  <span class="callout-label">Що ви вже знаєте</span>
+  <p>Ви вже вмієте будувати ланцюжки з <code>map</code>, <code>filter</code> та інших операцій з уроків 4-6. Цей урок — про те, як ці самі ланцюжки виконуються "під капотом", і коли це має значення.</p>
+</div>
+
+<h2>Проблема: зайві проміжні списки</h2>
+
+<pre><code>val result = listOf(1, 2, 3, 4, 5)
+    .map { it * 2 }      // крок 1: створює ЦІЛИЙ новий список [2,4,6,8,10]
+    .filter { it > 5 }    // крок 2: створює ще один новий список [6,8,10]
+    .first()               // крок 3: бере перший елемент
+</code></pre>
+
+<p>На <code>List</code> кожен виклик <code>map</code>/<code>filter</code> одразу обробляє <strong>всю</strong> колекцію і створює новий список повністю, перш ніж перейти до наступного кроку. Для 5 елементів це неважливо. Але якщо у вас 5 мільйонів елементів і 5 кроків у ланцюжку — це 5 повних проходів і 4 тимчасові списки, які відразу підуть у смітник.</p>
+
+<h2>Sequence: лінива обробка</h2>
+
+<pre><code>val result = listOf(1, 2, 3, 4, 5)
+    .asSequence()
+    .map { it * 2 }
+    .filter { it > 5 }
+    .first()
+</code></pre>
+
+<p><code>Sequence</code> обробляє елементи <strong>по одному, через весь ланцюжок</strong>, а не крок за кроком по всій колекції. Без проміжних списків. І що ще важливіше — <code>first()</code> тут зупиняє обробку одразу, як знайшовся підходящий елемент, не торкаючись решти.</p>
+
+<h3>Intermediate vs terminal операції</h3>
+
+<ul>
+  <li><strong>Intermediate</strong> (<code>map</code>, <code>filter</code>, ...) — самі по собі нічого не обчислюють, лише описують "що робити далі". Повертають нову <code>Sequence</code>.</li>
+  <li><strong>Terminal</strong> (<code>first()</code>, <code>toList()</code>, <code>sum()</code>, ...) — запускають фактичне обчислення і повертають реальний результат.</li>
+</ul>
+
+<div class="callout callout--pitfall">
+  <span class="callout-label">Типова пастка</span>
+  <p>Без terminal-операції наприкінці <code>Sequence</code> нічого не обчислить — ланцюжок просто описаний, але не виконаний. Якщо забули <code>.toList()</code> чи подібне в кінці — код "нічого не робить" без жодної помилки.</p>
+</div>
+
+<h2>Коли це реально потрібно</h2>
+
+<p>Для маленьких колекцій (сотні-тисячі елементів) різниця непомітна, а <code>Sequence</code> додає трохи зайвого синтаксису. <code>Sequence</code> варта уваги, коли: колекція велика, у ланцюжку декілька операцій підряд, або ви шукаєте лише один елемент (<code>first</code>/<code>find</code>) і хочете зупинитись, щойно він знайдений.</p>
+
+<div class="quiz" data-correct="A">
+  <p class="quiz-q">Яка операція на Sequence фактично запускає обчислення?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>toList()</code></button>
+    <button class="quiz-option" data-choice="B"><code>map { }</code></button>
+    <button class="quiz-option" data-choice="C"><code>filter { }</code></button>
+    <button class="quiz-option" data-choice="D"><code>asSequence()</code></button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — toList() є terminal-операцією, вона запускає весь ланцюжок." data-wrong="Ні. Це intermediate-операція — вона лише описує крок, не виконує його."></p>
+</div>
+
+<div class="quiz" data-correct="C">
+  <p class="quiz-q">Коли Sequence дає найбільший практичний виграш?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">три елементи, одна операція</button>
+    <button class="quiz-option" data-choice="B">п'ять елементів, нуль операцій</button>
+    <button class="quiz-option" data-choice="C">мільйон елементів, п'ять операцій</button>
+    <button class="quiz-option" data-choice="D">один елемент, одна операція</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — саме тут проміжні списки на звичайному List були б і великими, і численними." data-wrong="Ні. Виграш Sequence зростає з розміром даних і кількістю кроків у ланцюжку — тут обох мало."></p>
+</div>
+
+<div class="callout callout--source">
+  <span class="callout-label">Головне джерело</span>
+  <p><a href="https://typealias.com/guides/kotlin-sequences-illustrated-guide/" target="_blank" rel="noopener">typealias.com — Kotlin Sequences: An Illustrated Guide</a> для візуального пояснення, та <a href="https://typealias.com/guides/when-to-use-sequences/" target="_blank" rel="noopener">When to Use Sequences</a> для практичних критеріїв. Офіційно: <a href="https://kotlinlang.org/docs/sequences.html" target="_blank" rel="noopener">Kotlin Docs: Sequences</a>.</p>
+</div>
+
+<div class="callout callout--ask">
+  <span class="callout-label">Застрягли?</span>
+  <p>Це вступний урок — мета не стати експертом у Sequences, а знати, що вони існують і навіщо. Якщо захочете зрозуміти тему глибше (продуктивність, побудова власних послідовностей) — скажіть викладачу/агенту, це можна винести в окремий поглиблений урок.</p>
+</div>
+
+<div class="lesson-nav">
+  <a href="0007-mutable-kolektsii-na-praktytsi.html">← Mutable колекції на практиці</a>
+  <a href="index.html">Усі уроки</a>
+  <a href="0009-pidsumkova-praktyka.html">Наступний: Підсумкова практика →</a>
+</div>
+
+</main>
+<script src="../../../assets/quiz.js" defer></script>
+</body>
+</html>

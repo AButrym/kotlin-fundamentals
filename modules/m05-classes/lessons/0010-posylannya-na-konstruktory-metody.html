@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 10: Посилання на конструктори та методи</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Класи» · Урок 10 з 11 · ~7 хв</p>
+  <h1>Посилання на конструктори та методи</h1>
+  <p class="subtitle">Те, що в модулі «Функції» ми лише згадали: ::Person, Person::greet та obj::method.</p>
+</header>
+
+<h2>1. Нагадування</h2>
+
+<p>У модулі «Функції» ми передавали наявну функцію замість лямбди: <a href="../../m04-functions/lessons/0008-posylannya-na-funktsii.html"><code>::isEven</code></a> (<a href="../../../glossary/index.html#function-reference">посилання на функцію</a>). Класи додають ще кілька різновидів посилань. Для прикладів візьмемо:</p>
+
+<pre><code>data class Person(val name: String, val age: Int) {
+    fun greet(): String = "Привіт, я $name"
+    fun isAdult(): Boolean = age &gt;= 18
+}</code></pre>
+
+<h2>2. Посилання на конструктор</h2>
+
+<p>Конструктор можна передати як функцію, що створює об’єкти. Пишуть <code>::</code> і ім’я класу — <a href="../../../glossary/index.html#constructor-reference">constructor reference</a>:</p>
+
+<pre><code>val make: (String, Int) -&gt; Person = ::Person
+val olya = make("Оля", 20)     // те саме, що Person("Оля", 20)</code></pre>
+
+<p>Тип такого посилання: параметри конструктора → клас. Зручно, коли «створити об’єкт» треба передати як дію.</p>
+
+<h2>3. Посилання на метод і властивість класу</h2>
+
+<p>Запис <code>Person::greet</code> — посилання <strong>без конкретного об’єкта</strong>. Функція отримає об’єкт як <strong>перший аргумент</strong>:</p>
+
+<pre><code>fun printAll(items: List&lt;Person&gt;, show: (Person) -&gt; String) {
+    for (p in items) println(show(p))
+}
+
+val people = listOf(olya, make("Іван", 15), make("Марія", 30))
+printAll(people, Person::greet)      // Привіт, я Оля / Привіт, я Іван / …
+printAll(people, Person::name)       // властивість теж «функція» (Person) -&gt; String</code></pre>
+
+<h2>4. Bound-посилання: об’єкт уже вшито</h2>
+
+<p>Якщо ліворуч від <code>::</code> стоїть <strong>конкретний об’єкт</strong>, він «прив’язується» до посилання — це <a href="../../../glossary/index.html#bound-reference">bound reference</a>, і воно вже не потребує об’єкта як аргумента:</p>
+
+<pre><code>val hello: () -&gt; String = olya::greet
+println(hello())                      // Привіт, я Оля</code></pre>
+
+<h2>5. Зведена таблиця</h2>
+
+<table>
+  <tr><th>Запис</th><th>Функціональний тип</th><th>Що це</th></tr>
+  <tr><td><code>::Person</code></td><td><code>(String, Int) -&gt; Person</code></td><td>конструктор</td></tr>
+  <tr><td><code>Person::greet</code></td><td><code>(Person) -&gt; String</code></td><td>метод; об’єкт — перший аргумент</td></tr>
+  <tr><td><code>Person::isAdult</code></td><td><code>(Person) -&gt; Boolean</code></td><td>метод-предикат</td></tr>
+  <tr><td><code>Person::name</code></td><td><code>(Person) -&gt; String</code></td><td>властивість</td></tr>
+  <tr><td><code>olya::greet</code></td><td><code>() -&gt; String</code></td><td>bound: об’єкт <code>olya</code> уже вшито</td></tr>
+</table>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Який функціональний тип має посилання <code>Person::isAdult</code>, якщо метод <code>isAdult(): Boolean</code> не має параметрів?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>() -&gt; Boolean</code></button>
+    <button class="quiz-option" data-choice="B"><code>(Person) -&gt; Boolean</code></button>
+    <button class="quiz-option" data-choice="C"><code>(Boolean) -&gt; Person</code></button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: об’єкт Person стає першим параметром, результат — Boolean." data-wrong="Ні: посилання без конкретного об’єкта перетворює його на перший параметр — (Person) -&gt; Boolean."></p>
+</div>
+
+<h2>6. Де це застосовують</h2>
+
+<p>Посилання на властивості й методи вигідні там, де лямбда лише «передає далі» своє значення. Із функціями колекцій (модуль <a href="../../m06-collections/lessons/index.html">«Колекції»</a>, <a href="../../../glossary/index.html#functional-operations">map / filter</a>) це читається майже як речення:</p>
+
+<pre><code>println(people.map(Person::name))                              // [Оля, Іван, Марія]
+println(people.filter(Person::isAdult).map(Person::name))      // [Оля, Марія]
+println(listOf("kotlin", "oop").map(::Tag))                    // [#kotlin, #oop]</code></pre>
+
+<p>Тут <code>Tag(val text: String)</code> — клас з одним параметром, а <code>::Tag</code> — функція <code>(String) -&gt; Tag</code>. Усі ці виклики можна записати й лямбдою (<code>people.map { it.name }</code>); посилання — лише коротша форма.</p>
+
+<div class="quiz" data-answer="olya">
+  <div class="q">У <code>val hello = olya::greet</code> який об’єкт «вшито» у посилання? (ім’я змінної)</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>7. Практика</h2>
+
+<div class="callout">Для <code>Person</code> створіть <code>val names = listOf("Оля", "Іван")</code> і перетворіть на список <code>Person</code> з віком 18 — лямбдою <code>names.map { Person(it, 18) }</code>. Потім запишіть те саме для <code>Tag</code> через <code>::Tag</code> і поясніть, чому для <code>Person</code> не вийде просто <code>::Person</code> (підказка: кількість параметрів).</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-todo" data-slug="m05-l10-function-refs">
+  <p class="playground-todo-label">🎮 Playground — TODO: створити share-посилання</p>
+  <pre><code>data class Person(val name: String, val age: Int) {
+    fun greet(): String = "Привіт, я $name"
+    fun isAdult(): Boolean = age &gt;= 18
+}
+
+class Tag(val text: String) {
+    override fun toString(): String = "#$text"
+}
+
+fun printAll(items: List&lt;Person&gt;, show: (Person) -&gt; String) {
+    for (p in items) println(show(p))
+}
+
+fun main() {
+    // Посилання на конструктор: тип (String, Int) -&gt; Person
+    val make: (String, Int) -&gt; Person = ::Person
+    val olya = make("Оля", 20)
+    println(olya)                          // Person(name=Оля, age=20)
+
+    val people = listOf(olya, make("Іван", 15), make("Марія", 30))
+
+    // Незв’язане посилання на метод: Person::greet має тип (Person) -&gt; String
+    printAll(people, Person::greet)
+    // Привіт, я Оля
+    // Привіт, я Іван
+    // Привіт, я Марія
+
+    // Посилання на властивість теж працює як функція (Person) -&gt; String
+    printAll(people, Person::name)         // Оля, Іван, Марія (кожне з нового рядка)
+
+    // Зв’язане (bound) посилання: об’єкт уже «вшитий», тип () -&gt; String
+    val hello: () -&gt; String = olya::greet
+    println(hello())                       // Привіт, я Оля
+
+    println(people.map(Person::name))      // [Оля, Іван, Марія]
+    println(people.filter(Person::isAdult).map(Person::name))   // [Оля, Марія]
+    println(listOf("kotlin", "oop").map(::Tag))                 // [#kotlin, #oop]
+}</code></pre>
+</div>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0002-posylannya-companion-fn-refs.html">«Посилання, companion, посилання на функції — шпаргалка»</a> (уроки 5, 6, 10, 11).</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0009-data-class.html">← Попередній урок</a> · <a href="0011-pyatnashky-klas-board.html">Наступний урок: Підсумок: «П’ятнашки» як клас →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 1: Оголошення функцій</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Функції» · Урок 1 з 8 · ~5 хв</p>
+  <h1>Оголошення функції, параметри, тип повернення</h1>
+  <p class="subtitle">Ви вже вмієте писати умови, цикли та працювати з масивами. Функція — спосіб згорнути повторюваний код в один блок з ім'ям, який можна викликати звідусіль.</p>
+</header>
+
+<h2>1. Навіщо функції, якщо є цикли й умови?</h2>
+<p>Уявіть, що в трьох різних місцях програми потрібно перевірити, чи число просте. Без функцій довелось би копіювати одну й ту саму перевірку тричі. Функція дозволяє написати логіку <strong>один раз</strong> і викликати її за іменем.</p>
+
+<h2>2. Синтаксис оголошення</h2>
+<pre><code>fun double(x: Int): Int {
+    return 2 * x
+}
+
+val result = double(21)  // 42</code></pre>
+<p><code>fun</code> — ключове слово. <code>double</code> — ім'я. <code>(x: Int)</code> — параметр з типом. <code>: Int</code> — тип значення, яке функція поверне.</p>
+<div class="callout">Параметри всередині функції — це <code>val</code>: їх не можна переприсвоїти.</div>
+
+<h2>3. Unit — «нічого не повертає»</h2>
+<p>Якщо функція лише щось виконує (наприклад, друкує на екран) і не повертає значення, її тип повернення — <code>Unit</code>. Це типова поведінка, тож <code>: Unit</code> зазвичай не пишуть:</p>
+<pre><code>fun printSum(a: Int, b: Int) {
+    println(a + b)
+}</code></pre>
+
+<div class="quiz" data-answer="Unit">
+  <div class="q">Який тип повернення матиме функція, якщо вона нічого явно не повертає (наприклад, лише виконує println)?</div>
+  <input type="text" placeholder="ваша відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="fun add(a: Int, b: Int): Int">
+  <div class="q">Напишіть сигнатуру (без тіла) функції <code>add</code>, яка приймає два <code>Int</code> і повертає <code>Int</code>.</div>
+  <input type="text" placeholder="fun add(...): ...">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+<p>Редактор нижче — робочий Kotlin Playground. Натисніть трикутник ▶, щоб виконати, або редагуйте код і запускайте знову.</p>
+<div class="playground-embed"><iframe src="https://pl.kotl.in/_981tdKu2" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/_981tdKu2" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<h2>Довідка</h2>
+<p>Повний синтаксис і глосарій — у довіднику <a href="../reference/0001-funktsii-kotlin.html">«Функції в Kotlin — шпаргалка»</a>. Першоджерело: <a href="https://kotlinlang.org/docs/functions.html" target="_blank" rel="noopener">Kotlin Docs — Functions</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0002-funktsii-virazy.html">Наступний урок: Функції-вирази →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 5: Посилання та рівність об’єктів</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Класи» · Урок 5 з 11 · ~8 хв</p>
+  <h1>Посилання та рівність об’єктів</h1>
+  <p class="subtitle">Змінна не містить об’єкт — вона вказує на нього. Звідси спільні об’єкти та два види рівності.</p>
+</header>
+
+<h2>1. Змінна зберігає посилання</h2>
+
+<p>Для <code>Int</code> чи <code>Boolean</code> присвоєння копіює значення. Для об’єктів усе інакше: змінна зберігає <strong>посилання</strong> на об’єкт, і присвоєння копіює лише посилання. Ви вже бачили це з масивами (<a href="../../../glossary/index.html#aliasing">аліасинг</a>) — для об’єктів класів діє той самий закон.</p>
+
+<pre><code>class Point(var x: Int, var y: Int)
+
+val a = Point(1, 2)
+val b = a            // не копія, а друге посилання на той самий об’єкт
+b.x = 100
+println(a.x)         // 100 — об’єкт один, змінили його через b</code></pre>
+
+<div class="quiz" data-answer="9">
+  <div class="q"><code>val a = Point(1, 2); val b = a; b.x = 9</code> — що виведе <code>println(a.x)</code>?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>2. Об’єкти у функціях</h2>
+
+<p>Так само, коли об’єкт передають у функцію, передається посилання, і функція може його змінити:</p>
+
+<pre><code>fun moveRight(p: Point) {
+    p.x += 1
+}
+
+moveRight(a)
+println(a.x)         // змінився й назовні</code></pre>
+
+<p>Це зручно (не копіюємо великі структури), але й небезпечно: «хтось інший» теж тримає посилання на цей самий об’єкт. Саме тому корисні <code>val</code>-властивості й приватні сеттери з уроку <a href="0004-inkapsulyatsiya-vlastyvosti.html">4</a>.</p>
+
+<h2>3. val і посилання</h2>
+
+<p><code>val a = Point(1, 2)</code> означає: змінна <code>a</code> завжди вказуватиме на <em>цей</em> об’єкт (<code>a = Point(0, 0)</code> — помилка). Але вміст об’єкта змінювати можна, якщо його властивості — <code>var</code>. Хочете, щоб і вміст не змінювався — робіть властивості <code>val</code>.</p>
+
+<h2>4. Два види рівності: == і ===</h2>
+
+<p>У Kotlin є два оператори порівняння об’єктів (<a href="../../../glossary/index.html#reference-equality">рівність</a>):</p>
+
+<table>
+  <tr><th>Оператор</th><th>Питання</th><th>Для звичайного класу</th></tr>
+  <tr><td><code>===</code></td><td>Це <strong>той самий</strong> об’єкт (однакове посилання)?</td><td>завжди працює так</td></tr>
+  <tr><td><code>==</code></td><td>Об’єкти «рівні за змістом»?</td><td>за замовчуванням — теж порівнює посилання</td></tr>
+</table>
+
+<pre><code>val c = Point(1, 2)
+val d = Point(1, 2)
+println(c == d)      // false — різні об’єкти, хоч і однакові за змістом
+println(c === d)     // false
+val e = c
+println(c === e)     // true — одне й те саме посилання</code></pre>
+
+<p>Тобто для власного класу <code>==</code> не порівнює властивості «сам собою». Щоб <code>Point(1, 2) == Point(1, 2)</code> було <code>true</code>, потрібен метод <code>equals</code> (і узгоджений <code>hashCode</code>) — вручну їх писати складно й легко помилитися, тому в Kotlin є готове рішення — <a href="0009-data-class.html"><code>data class</code></a>. До нього ми ще дійдемо.</p>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Що виведе <code>println(Point(1, 2) == Point(1, 2))</code> для звичайного (не data) класу <code>Point</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>true</code> — властивості однакові</button>
+    <button class="quiz-option" data-choice="B"><code>false</code> — це два різні об’єкти, а == порівнює посилання</button>
+    <button class="quiz-option" data-choice="C">Помилка компіляції</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: без власного equals оператор == збігається з ===." data-wrong="Ні: код компілюється, але без equals == порівнює посилання, а їх тут два різні."></p>
+</div>
+
+<h2>5. Пастка: один об’єкт у масиві N разів</h2>
+
+<p>Пригадайте проблему з матрицею з уроку <a href="../../m03-arrays-loops/lessons/0003-vkladeni-masyvy.html">«Вкладені масиви»</a>. З об’єктами повторюється те саме:</p>
+
+<pre><code>val shared = Point(0, 0)
+val bad = Array(3) { shared }          // три посилання на ОДИН об’єкт
+bad[0].x = 5
+println(bad[2].x)                      // 5!
+
+val good = Array(3) { Point(0, 0) }    // лямбда щоразу створює новий об’єкт
+good[0].x = 5
+println(good[2].x)                     // 0</code></pre>
+
+<h2>6. Практика</h2>
+
+<div class="callout">Передбачте результат, а потім перевірте в Playground: створіть <code>val p = Point(1, 1)</code>, <code>val q = p</code>, <code>val r = Point(1, 1)</code>. Що дадуть <code>p === q</code>, <code>p === r</code>, <code>p == r</code>? Напишіть функцію <code>fun reset(p: Point)</code>, що обнуляє координати, і переконайтеся, що вона змінює об’єкт у <code>main</code>.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-todo" data-slug="m05-l05-references-equality">
+  <p class="playground-todo-label">🎮 Playground — TODO: створити share-посилання</p>
+  <pre><code>class Point(var x: Int, var y: Int)
+
+fun moveRight(p: Point) {
+    p.x += 1                           // змінюємо об’єкт, на який вказує p
+}
+
+fun main() {
+    val a = Point(1, 2)
+    val b = a                          // не копія, а друге посилання на той самий об’єкт
+    b.x = 100
+    println(a.x)                       // 100
+    moveRight(a)
+    println(a.x)                       // 101
+    // a = Point(0, 0)                 // розкоментуйте: val забороняє переприсвоювати посилання
+
+    val c = Point(1, 2)
+    val d = Point(1, 2)
+    println(c == d)                    // false — для звичайного класу == це те саме, що ===
+    println(c === d)                   // false — різні об’єкти
+    val e = c
+    println(c === e)                   // true — той самий об’єкт
+
+    // Пастка з уроку 3 про масиви:
+    val shared = Point(0, 0)
+    val bad = Array(3) { shared }      // три посилання на один об’єкт
+    bad[0].x = 5
+    println(bad[2].x)                  // 5
+    val good = Array(3) { Point(0, 0) }  // лямбда щоразу створює новий об’єкт
+    good[0].x = 5
+    println(good[2].x)                 // 0
+}</code></pre>
+</div>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0002-posylannya-companion-fn-refs.html">«Посилання, companion, посилання на функції — шпаргалка»</a> (уроки 5, 6, 10, 11).</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0004-inkapsulyatsiya-vlastyvosti.html">← Попередній урок</a> · <a href="0006-companion-object.html">Наступний урок: Companion object: константи та фабрики →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

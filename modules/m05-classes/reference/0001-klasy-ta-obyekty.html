@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Довідка: Класи та об’єкти — шпаргалка</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="../lessons/index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Класи» · Довідка</p>
+  <h1>Класи та об’єкти — шпаргалка</h1>
+  <p class="subtitle">Для уроків 1–4: клас, конструктор, методи, видимість і властивості.</p>
+</header>
+
+<h2>1. Клас і об’єкт</h2>
+
+<table>
+  <tr><th>Запис</th><th>Значення</th></tr>
+  <tr><td><code>class Point { var x = 0 }</code></td><td><a href="../../../glossary/index.html#class">клас</a> із властивістю; об’єкт: <code>val p = Point()</code></td></tr>
+  <tr><td><code>p.x</code>, <code>p.x = 3</code></td><td>читання / запис <a href="../../../glossary/index.html#property">властивості</a></td></tr>
+  <tr><td><code>val</code> / <code>var</code> у класі</td><td>незмінна / змінна властивість</td></tr>
+  <tr><td><code>Point()</code></td><td>виклик конструктора (без <code>new</code>)</td></tr>
+</table>
+
+<h2>2. Конструктори</h2>
+
+<table>
+  <tr><th>Запис</th><th>Значення</th></tr>
+  <tr><td><code>class P(val x: Int, y: Int)</code></td><td><a href="../../../glossary/index.html#constructor">первинний конструктор</a>: <code>x</code> — властивість, <code>y</code> — лише параметр</td></tr>
+  <tr><td><code>class P(val x: Int = 0)</code></td><td>значення за замовчуванням; <code>P(x = 5)</code> — іменований аргумент</td></tr>
+  <tr><td><code>init { require(x &gt; 0) { "…" } }</code></td><td><a href="../../../glossary/index.html#init-block">блок init</a>: виконується при створенні; <code>require</code> перевіряє дані</td></tr>
+  <tr><td><code>constructor() : this(0, 0)</code></td><td>додатковий конструктор (мусить викликати <code>this(…)</code>)</td></tr>
+</table>
+
+<h2>3. Методи, this, toString</h2>
+
+<table>
+  <tr><th>Запис</th><th>Значення</th></tr>
+  <tr><td><code>fun add(n: Int) { value += n }</code></td><td><a href="../../../glossary/index.html#method">метод</a>: функція в тілі класу, бачить властивості об’єкта</td></tr>
+  <tr><td><code>this.x = x</code></td><td><a href="../../../glossary/index.html#this">this</a>: властивість поточного об’єкта, коли ім’я «затінене» параметром</td></tr>
+  <tr><td><code>override fun toString(): String = "($x, $y)"</code></td><td><a href="../../../glossary/index.html#tostring">текстове подання</a> для <code>println</code> і шаблонів <code>"$p"</code></td></tr>
+</table>
+
+<h2>4. Видимість та властивості з логікою</h2>
+
+<table>
+  <tr><th>Запис</th><th>Значення</th></tr>
+  <tr><td><code>private val data</code></td><td><a href="../../../glossary/index.html#visibility">private</a>: доступно лише всередині класу (за замовчуванням — public)</td></tr>
+  <tr><td><code>var b: Int = 0</code><br><code>&nbsp;&nbsp;private set</code></td><td>читати можна всім, змінювати — лише клас</td></tr>
+  <tr><td><code>val area: Int</code><br><code>&nbsp;&nbsp;get() = w * h</code></td><td>обчислювана властивість (немає власного поля)</td></tr>
+  <tr><td><code>var t: Int = 20</code><br><code>&nbsp;&nbsp;set(v) { if (v in 10..30) field = v }</code></td><td>власний <a href="../../../glossary/index.html#custom-accessor">setter</a>; <code>field</code> — приховане поле</td></tr>
+</table>
+
+<h2>5. Типові помилки</h2>
+
+<ul>
+  <li>забули <code>val</code>/<code>var</code> у конструкторі й дивуються, що <code>p.birthYear</code> не існує;</li>
+  <li><code>x = x</code> замість <code>this.x = x</code> у методі з однойменним параметром;</li>
+  <li>відкрита <code>var</code>-властивість там, де вистачило б <code>private set</code>;</li>
+  <li>у власному setter-і написали <code>target = value</code> замість <code>field = value</code> — нескінченна рекурсія.</li>
+</ul>
+
+</div>
+</body>
+</html>

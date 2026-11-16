@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 8: Лінійний пошук, підрахунок, сума, мінімум</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Цикли та масиви» · Урок 8 з 13 · ~9 хв</p>
+  <h1>Лінійний пошук, підрахунок, сума, мінімум</h1>
+  <p class="subtitle">Базові шаблони обходу масиву.</p>
+</header>
+
+<div class="callout">**Невеличка примітка про <code>fun</code>.** Далі алгоритми зручно оформлювати функціями. Поки що читайте шаблон так: <code>fun назва(параметр: Тип): ТипРезультату { … return значення }</code>. Функцію викликають за ім’ям: <code>назва(аргумент)</code>. Усе про <a href="../../../glossary/index.html#function">функції</a> — у наступному модулі, а тут ми їх лише використовуємо.</div>
+
+<h2>1. Лінійний пошук</h2>
+
+<p><a href="../../../glossary/index.html#linear-search">Лінійний пошук</a>: переглядаємо елементи по черзі; знайшли — повертаємо індекс, не знайшли — <code>-1</code> (бо <code>-1</code> ніколи не є коректним індексом).</p>
+
+<pre><code>fun linearSearch(arr: IntArray, target: Int): Int {
+    for (i in arr.indices) {
+        if (arr[i] == target) return i
+    }
+    return -1
+}</code></pre>
+
+<p>У гіршому випадку переглядаємо всі <code>n</code> елементів — кажуть, що складність <strong>O(n)</strong> (час зростає пропорційно розміру масиву).</p>
+
+<div class="quiz" data-answer="2">
+  <div class="q">Що поверне <code>linearSearch(intArrayOf(5, 7, 9), 9)</code>?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>2. Підрахунок за умовою та сума</h2>
+
+<pre><code>fun countPositive(arr: IntArray): Int {
+    var count = 0
+    for (x in arr) {
+        if (x &gt; 0) count++
+    }
+    return count
+}
+
+fun sum(arr: IntArray): Int {
+    var total = 0
+    for (x in arr) total += x
+    return total
+}</code></pre>
+
+<p>Шаблон: <strong>акумулятор</strong> (<code>count</code>, <code>total</code>) ініціалізуємо нейтральним значенням (<code>0</code>) і оновлюємо в циклі.</p>
+
+<h2>3. Мінімум і максимум</h2>
+
+<pre><code>fun maxValue(arr: IntArray): Int {
+    var best = arr[0]               // не 0!
+    for (i in 1 until arr.size) {
+        if (arr[i] &gt; best) best = arr[i]
+    }
+    return best
+}</code></pre>
+
+<div class="warn">Починати з <code>best = 0</code> — помилка для масивів лише з від’ємними числами. Початкове значення — <strong>перший елемент</strong>. Для порожнього масиву такий код впаде: це треба перевіряти окремо.</div>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Що поверне наївний <code>max</code>, який стартує з <code>best = 0</code>, для <code>[-5, -2, -9]</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>-2</code></button>
+    <button class="quiz-option" data-choice="B"><code>0</code></button>
+    <button class="quiz-option" data-choice="C"><code>-5</code></button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: жоден елемент не більший за 0, тож відповідь хибна." data-wrong="Ні: `best` залишиться `0` — числа, якого у масиві немає. Саме тому стартуємо з `arr[0]`."></p>
+</div>
+
+<h2>4. Узагальнення: умова як параметр</h2>
+
+<p>Підрахунок «додатних», «парних», «більших за 10» відрізняється лише умовою. Умову можна передати як <a href="../../../glossary/index.html#lambda">лямбду</a> — ось підгляд у наступний модуль:</p>
+
+<pre><code>fun countIf(arr: IntArray, predicate: (Int) -&gt; Boolean): Int {
+    var count = 0
+    for (x in arr) {
+        if (predicate(x)) count++
+    }
+    return count
+}
+
+countIf(intArrayOf(3, -1, 8, 0)) { it &gt; 0 }       // 2
+countIf(intArrayOf(3, -1, 8, 0)) { it % 2 == 0 } // 2 (8 і 0)</code></pre>
+
+<div class="callout">Готові <code>arr.sum()</code>, <code>arr.count { … }</code>, <code>arr.max()</code> існують у стандартній бібліотеці (їх розбирають у модулі «Колекції»). Ми пишемо їх самі, щоб відчути, як працює цикл під капотом.</div>
+
+<h2>5. Практика</h2>
+
+<div class="callout">Напишіть <code>minIndex(arr: IntArray): Int</code> — індекс найменшого елемента; і <code>average(arr: IntArray): Double</code> (сума, поділена на розмір; подумайте, що зробити з цілочисельним діленням).</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-embed"><iframe src="https://pl.kotl.in/GuOI81VjL?theme=darcula" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/GuOI81VjL?theme=darcula" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0003-alhorytmy-strajdy-pyatnashky.html">«Алгоритми, страйди, П’ятнашки — шпаргалка»</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0007-break-continue-repeat.html">← Попередній урок</a> · <a href="0009-bulbashka-binarnyj-poshuk.html">Наступний урок: Сортування бульбашкою та бінарний пошук →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

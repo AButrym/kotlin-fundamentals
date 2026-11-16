@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 5: Ітерація по масиву та матриці</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Цикли та масиви» · Урок 5 з 13 · ~8 хв</p>
+  <h1>Ітерація по масиву та матриці</h1>
+  <p class="subtitle">Значення, індекси, withIndex, вкладені цикли.</p>
+</header>
+
+<h2>1. Перебір значень</h2>
+
+<p>Якщо потрібні лише значення елементів, <code>for</code> можна застосувати до самого масиву:</p>
+
+<pre><code>val arr = intArrayOf(4, 8, 15, 16)
+for (x in arr) {
+    print("$x ")      // 4 8 15 16
+}</code></pre>
+
+<div class="warn"><code>x</code> — це <strong>копія значення</strong>, до того ж доступна лише для читання. Присвоїти <code>x = x * 2</code> не можна, а навіть якби було можна, масив би не змінився.</div>
+
+<h2>2. Перебір індексів</h2>
+
+<p>Щоб змінювати елементи, потрібні індекси. Властивість <code>indices</code> дає діапазон <code>0 until size</code>:</p>
+
+<pre><code>for (i in arr.indices) {
+    arr[i] = arr[i] * 2
+}
+println(arr.contentToString())   // [8, 16, 30, 32]</code></pre>
+
+<p>Еквівалентні записи: <code>0 until arr.size</code>, <code>0..arr.lastIndex</code>.</p>
+
+<div class="quiz" data-answer="6">
+  <div class="q">Для масиву з 6 елементів скільки ітерацій виконає <code>for (i in arr.indices)</code>?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>3. Індекс і значення разом: withIndex</h2>
+
+<pre><code>for ((i, x) in arr.withIndex()) {
+    println("arr[$i] = $x")
+}</code></pre>
+
+<p>Запис <code>(i, x)</code> у дужках розкладає пару «індекс — значення» на дві змінні — це <a href="../../../glossary/index.html#destructuring">деструктуризація</a>. Докладно вона розглядається разом із класами.</p>
+
+<p><strong>Зворотний обхід:</strong> <code>for (i in arr.lastIndex downTo 0)</code> або <code>for (i in arr.indices.reversed())</code>.</p>
+
+<table>
+  <tr><th>Мета</th><th>Яку форму брати</th></tr>
+  <tr><td>лише прочитати значення</td><td><code>for (x in arr)</code></td></tr>
+  <tr><td>змінити елементи, використати індекс</td><td><code>for (i in arr.indices)</code></td></tr>
+  <tr><td>потрібні і індекс, і значення для читання</td><td><code>for ((i, x) in arr.withIndex())</code></td></tr>
+  <tr><td>іти назад або з кроком</td><td><code>for (i in arr.lastIndex downTo 0)</code>, <code>… step 2</code></td></tr>
+</table>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Яка форма цикла дозволяє подвоїти кожен елемент масиву?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>for (x in arr) x *= 2</code></button>
+    <button class="quiz-option" data-choice="B"><code>for (i in arr.indices) arr[i] *= 2</code></button>
+    <button class="quiz-option" data-choice="C"><code>for ((i, x) in arr.withIndex()) x *= 2</code></button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: змінювати можна лише через звернення `arr[i]`." data-wrong="Ні: у перелічених `x` — копія лише для читання. Запис працює лише через `arr[i]`."></p>
+</div>
+
+<h2>4. Вкладені цикли: обхід матриці</h2>
+
+<p>Для матриці зовнішній цикл іде по <strong>рядках</strong>, внутрішній — по <strong>клітинках рядка</strong>. Довжину рядка беремо з самого рядка — тоді код працює й для <a href="../../../glossary/index.html#jagged-array">зубчастих масивів</a>:</p>
+
+<pre><code>val grid = arrayOf(intArrayOf(1, 2, 3), intArrayOf(4, 5), intArrayOf(6))
+
+for (r in grid.indices) {
+    for (c in grid[r].indices) {
+        print("${grid[r][c]} ")
+    }
+    println()                // кінець рядка — після внутрішнього циклу
+}
+// 1 2 3
+// 4 5
+// 6</code></pre>
+
+<p>Якщо індекси не потрібні, можна коротше: <code>for (row in grid) for (v in row) print("$v ")</code>.</p>
+
+<h2>5. Практика</h2>
+
+<div class="callout">Створіть матрицю <code>Array(3) { IntArray(3) }</code> і заповніть її так, щоб <code>grid[r][c] = r * 3 + c</code>, а потім виведіть рядками. Заповнення діагоналі одиницями (практика з уроку 3) тепер теж можна зробити циклом <code>for (i in grid.indices) grid[i][i] = 1</code>.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-embed"><iframe src="https://pl.kotl.in/WFrHlunay?theme=darcula" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/WFrHlunay?theme=darcula" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0002-diapazony-ta-tsykly.html">«Діапазони та цикли — шпаргалка»</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0004-range-ta-for.html">← Попередній урок</a> · <a href="0006-while-do-while.html">Наступний урок: Цикли while та do-while →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

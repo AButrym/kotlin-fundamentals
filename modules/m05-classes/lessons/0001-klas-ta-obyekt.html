@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 1: Клас і об’єкт</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Класи» · Урок 1 з 11 · ~6 хв</p>
+  <h1>Клас і об’єкт</h1>
+  <p class="subtitle">Тип із власними полями: опис (клас) і конкретні екземпляри (об’єкти).</p>
+</header>
+
+<div class="callout"><strong>Ви вже зустрічали клас.</strong> У модулі «Цикли та масиви» ми писали <code>Matrix</code> — це був клас. Тоді ми користувалися ним «за шаблоном»; тепер вивчаємо класи систематично, з нуля.</div>
+
+<h2>1. Навіщо потрібні класи</h2>
+
+<p>Точка на площині — це два числа, що завжди йдуть разом: <code>x</code> і <code>y</code>. Якщо тримати їх як окремі змінні, для кожної точки доводиться вигадувати пари імен (<code>x1</code>, <code>y1</code>, <code>x2</code>, <code>y2</code>…), а передати точку у функцію — це вже два параметри. <a href="../../../glossary/index.html#class">Клас</a> дозволяє описати <strong>новий тип</strong>, що об’єднує дані.</p>
+
+<ul>
+  <li><strong>Клас</strong> — опис: які дані містить тип і що з ними можна робити («креслення»).</li>
+  <li><strong>Об’єкт</strong> (екземпляр, <a href="../../../glossary/index.html#object-instance">object / instance</a>) — конкретна «річ», створена за цим описом. З одного класу можна створити скільки завгодно об’єктів.</li>
+</ul>
+
+<h2>2. Оголошення класу та створення об’єкта</h2>
+
+<pre><code>class Point {
+    var x = 0
+    var y = 0
+}
+
+fun main() {
+    val a = Point()      // створення об’єкта: ім’я класу + дужки
+    a.x = 3              // доступ до властивості через крапку
+    a.y = 4
+    println("(${a.x}, ${a.y})")   // (3, 4)
+}</code></pre>
+
+<ul>
+  <li><code>var x = 0</code> усередині класу — це <a href="../../../glossary/index.html#property">властивість</a> (property): змінна, що належить кожному об’єктові окремо. Тип <code>Int</code> виводиться з початкового значення, як і для звичайних змінних.</li>
+  <li><code>Point()</code> — виклик <a href="../../../glossary/index.html#constructor">конструктора</a>. У Kotlin немає слова <code>new</code>.</li>
+  <li><code>a.x</code> — читання, <code>a.x = 3</code> — запис властивості об’єкта <code>a</code>.</li>
+  <li>Назви класів пишуть з великої літери (<code>Point</code>), змінних і властивостей — з малої.</li>
+</ul>
+
+<div class="quiz" data-answer="0">
+  <div class="q">Яке значення побачимо: <code>val b = Point()</code> і одразу <code>println(b.x)</code>?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>3. Об’єкти незалежні</h2>
+
+<p>Кожен об’єкт має <strong>власний набір</strong> значень властивостей:</p>
+
+<pre><code>val a = Point()
+a.x = 3
+val b = Point()
+b.x = 10
+println(a.x)   // 3 — зміна b не торкнулася a
+println(b.x)   // 10</code></pre>
+
+<p>Властивості бувають <code>val</code> і <code>var</code>, як і звичайні змінні: <code>val dimension = 2</code> у класі не можна змінити після створення, а <code>var</code> — можна.</p>
+
+<div class="callout"><strong>Ще раз про val.</strong> <code>val a = Point()</code> забороняє лише присвоїти змінній <code>a</code> <em>інший</em> об’єкт. Змінювати властивості-<code>var</code> самого об’єкта (<code>a.x = 3</code>) можна. Чому так — в уроці <a href="0005-posylannya-ta-rivnist.html">«Посилання та рівність об’єктів»</a>.</div>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Що таке об’єкт?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">Опис типу з переліком його властивостей</button>
+    <button class="quiz-option" data-choice="B">Конкретний екземпляр, створений за описом класу</button>
+    <button class="quiz-option" data-choice="C">Те саме, що й властивість</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: клас — опис, об’єкт — «річ», створена за цим описом." data-wrong="Ні: опис типу — це клас, а об’єкт — його конкретний екземпляр, який має власні значення властивостей."></p>
+</div>
+
+<h2>4. Практика</h2>
+
+<div class="callout">Опишіть клас <code>Book</code> із властивостями <code>title</code> (<code>String</code>, початкове значення <code>""</code>) та <code>pages</code> (<code>Int</code>, початкове <code>0</code>). Створіть два об’єкти, заповніть їх і виведіть <code>"&lt;назва&gt;: &lt;кількість&gt; стор."</code>. Спробуйте змінити <code>val</code>-властивість — подивіться, яку помилку видасть компілятор.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-todo" data-slug="m05-l01-class-object">
+  <p class="playground-todo-label">🎮 Playground — TODO: створити share-посилання</p>
+  <pre><code>class Point {
+    var x = 0
+    var y = 0
+    val dimension = 2      // val: після ініціалізації незмінна
+}
+
+fun main() {
+    val a = Point()
+    a.x = 3
+    a.y = 4
+
+    val b = Point()
+    b.x = 10
+
+    println("a = (${a.x}, ${a.y})")   // a = (3, 4)
+    println("b = (${b.x}, ${b.y})")   // b = (10, 0)
+
+    b.y = a.y * 2
+    println("b = (${b.x}, ${b.y})")   // b = (10, 8)
+    println("a = (${a.x}, ${a.y})")   // a = (3, 4) — a не змінився
+
+    println(a.dimension)              // 2
+    // a.dimension = 3                // розкоментуйте: помилка (val)
+}</code></pre>
+</div>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0001-klasy-ta-obyekty.html">«Класи та об’єкти — шпаргалка»</a> (уроки 1–4).</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="index.html">← До переліку уроків</a> · <a href="0002-konstruktor-init.html">Наступний урок: Конструктор і блок init →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

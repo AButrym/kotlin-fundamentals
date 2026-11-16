@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Довідка: Посилання, companion, посилання на функції — шпаргалка</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="../lessons/index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Класи» · Довідка</p>
+  <h1>Посилання, companion, посилання на функції — шпаргалка</h1>
+  <p class="subtitle">Для уроків 5, 6, 10, 11: посилання на об’єкти, companion object, посилання на функції та підсумок.</p>
+</header>
+
+<h2>1. Посилання та рівність</h2>
+
+<table>
+  <tr><th>Запис</th><th>Значення</th></tr>
+  <tr><td><code>val b = a</code></td><td>друге посилання на той самий об’єкт (<a href="../../../glossary/index.html#aliasing">аліасинг</a>), а не копія</td></tr>
+  <tr><td><code>fun f(p: Point) { p.x++ }</code></td><td>змінює об’єкт викликача — передається посилання</td></tr>
+  <tr><td><code>a === b</code></td><td>той самий об’єкт?</td></tr>
+  <tr><td><code>a == b</code></td><td><a href="../../../glossary/index.html#reference-equality">рівні за змістом</a>? Для звичайного класу — те саме, що <code>===</code>; для <code>data class</code> — порівняння властивостей</td></tr>
+  <tr><td><code>Array(3) { Point(0, 0) }</code></td><td>три різні об’єкти; <code>Array(3) { shared }</code> — один об’єкт тричі</td></tr>
+</table>
+
+<h2>2. Companion object</h2>
+
+<table>
+  <tr><th>Запис</th><th>Значення</th></tr>
+  <tr><td><code>companion object { … }</code></td><td><a href="../../../glossary/index.html#companion-object">companion object</a>: члени, що належать класу; один на клас</td></tr>
+  <tr><td><code>const val MIN = 10</code></td><td>константа часу компіляції (числа, <code>Boolean</code>, <code>String</code>)</td></tr>
+  <tr><td><code>Account.MIN</code>, <code>Account.open("Оля")</code></td><td>виклик через ім’я класу (зсередини — просто <code>MIN</code>)</td></tr>
+  <tr><td><code>class A private constructor(…)</code></td><td>конструктор сховано; створюють фабриками з companion</td></tr>
+  <tr><td><code>private var nextId = 1</code> у companion</td><td>спільний для всіх об’єктів лічильник</td></tr>
+</table>
+
+<p>Companion: деталі (ім’я, інтерфейси) — <a href="../../../glossary/index.html#companion-details">модуль 7</a>. Оголошення <code>object</code> (singleton) — <a href="../../../glossary/index.html#object">модуль 7</a>.</p>
+
+<h2>3. Посилання на функції з класами</h2>
+
+<table>
+  <tr><th>Запис</th><th>Тип</th><th>Що це</th></tr>
+  <tr><td><code>::Person</code></td><td><code>(String, Int) -&gt; Person</code></td><td><a href="../../../glossary/index.html#constructor-reference">конструктор</a></td></tr>
+  <tr><td><code>Person::greet</code></td><td><code>(Person) -&gt; String</code></td><td>метод; об’єкт — перший аргумент</td></tr>
+  <tr><td><code>Person::name</code></td><td><code>(Person) -&gt; String</code></td><td>властивість як функція</td></tr>
+  <tr><td><code>olya::greet</code></td><td><code>() -&gt; String</code></td><td><a href="../../../glossary/index.html#bound-reference">bound</a>: об’єкт уже вшито</td></tr>
+</table>
+
+<h2>4. Структура «П’ятнашок» (урок 11)</h2>
+
+<table>
+  <tr><th>Елемент <code>Board</code></th><th>Прийом</th></tr>
+  <tr><td><code>private constructor(private val cells: Matrix)</code></td><td>конструктор і поле приховано</td></tr>
+  <tr><td><code>companion object { const val SIZE; fun solved(); fun scrambled(n) }</code></td><td>константи й фабрики</td></tr>
+  <tr><td><code>val isSolved: Boolean get() = …</code></td><td>обчислювана властивість</td></tr>
+  <tr><td><code>fun move(row, col): Boolean</code></td><td>метод, що змінює приватний стан законним шляхом</td></tr>
+</table>
+
+<h2>5. Типові помилки</h2>
+
+<ul>
+  <li>очікували копію від <code>val b = a</code> — а змінили спільний об’єкт;</li>
+  <li><code>a == b</code> для звичайного класу: <code>false</code>, хоча значення однакові;</li>
+  <li>спроба створити об’єкт класу з <code>private constructor</code> поза його companion;</li>
+  <li>плутанина <code>Person::greet</code> (потрібен об’єкт-аргумент) з <code>olya::greet</code> (об’єкт уже є).</li>
+</ul>
+
+</div>
+</body>
+</html>

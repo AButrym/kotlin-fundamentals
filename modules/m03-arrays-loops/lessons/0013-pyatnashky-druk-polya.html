@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 13: П’ятнашки: друк поля</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Цикли та масиви» · Урок 13 з 13 · ~8 хв</p>
+  <h1>П’ятнашки: друк поля</h1>
+  <p class="subtitle">Обхід по рядках і клітинках: масив масивів проти страйдів.</p>
+</header>
+
+<h2>1. Що друкуємо</h2>
+
+<p>Поле 4×4 хочемо побачити як сітку: числа вирівняні в стовпчики, порожня клітинка — пробіли. Загальна схема будь-якого друку таблиці — <strong>обхід по рядках і клітинках</strong>:</p>
+
+<pre><code>for (кожен рядок) {
+    for (кожна клітинка рядка) {
+        надрукувати клітинку (без переходу на новий рядок)
+    }
+    перейти на новий рядок      // println() — вже ПІСЛЯ внутрішнього циклу
+}</code></pre>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Де має стояти <code>println()</code> для переходу на новий рядок?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">усередині внутрішнього циклу</button>
+    <button class="quiz-option" data-choice="B">після внутрішнього циклу, але всередині зовнішнього</button>
+    <button class="quiz-option" data-choice="C">після обох циклів</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: один раз на кожен рядок поля." data-wrong="Ні: у внутрішньому циклі кожна клітинка опинилась би в окремому рядку, а після обох — усе в одному."></p>
+</div>
+
+<h2>2. Вирівнювання клітинок</h2>
+
+<p><code>text.padStart(3)</code> доповнює рядок пробілами зліва до довжини 3: <code>"7".padStart(3)</code> → <code>"  7"</code>. Порожню клітинку показуємо порожнім рядком — вона теж займе 3 пробіли.</p>
+
+<div class="quiz" data-answer="2">
+  <div class="q">Скільки пробілів додасть <code>"7".padStart(3)</code>?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>3. Варіант А: масив масивів</h2>
+
+<pre><code>fun printBoardRows(board: Array&lt;IntArray&gt;) {
+    for (r in board.indices) {
+        for (c in board[r].indices) {
+            val v = board[r][c]
+            val text = if (v == BLANK) "" else v.toString()
+            print(text.padStart(3))
+        }
+        println()
+    }
+}</code></pre>
+
+<h2>4. Варіант Б: страйди та m[r, c]</h2>
+
+<p>Клас <code>Matrix</code> з уроку 11 ховає формулу <code>r * cols + c</code>; обхід виглядає майже так само, але без вкладених масивів:</p>
+
+<pre><code>fun printBoardMatrix(m: Matrix) {
+    for (r in 0 until m.rows) {
+        for (c in 0 until m.cols) {
+            val v = m[r, c]
+            val text = if (v == BLANK) "" else v.toString()
+            print(text.padStart(3))
+        }
+        println()
+    }
+}</code></pre>
+
+<p>Перетворення плоскої перестановки з уроку 12 на кожне подання:</p>
+
+<pre><code>val flat = intArrayOf(5, 1, 2, 4, 9, 6, 3, 8, 13, 10, 7, 12, 14, 15, 11, 16)
+
+// масив масивів: рядок r складається з flat[r * SIZE + 0 .. SIZE - 1]
+val rows = Array(SIZE) { r -&gt; IntArray(SIZE) { c -&gt; flat[r * SIZE + c] } }
+
+// матриця зі страйдом: індекс i -&gt; (i / SIZE, i % SIZE)
+val m = Matrix(SIZE, SIZE)
+for (i in flat.indices) m[i / SIZE, i % SIZE] = flat[i]</code></pre>
+
+<table>
+  <tr><th></th><th>Масив масивів</th><th><code>Matrix</code> на страйдах</th></tr>
+  <tr><td>Звернення</td><td><code>board[r][c]</code></td><td><code>m[r, c]</code></td></tr>
+  <tr><td>Об’єктів у пам’яті</td><td>1 + 4</td><td>1 (<code>data</code>) + сам <code>Matrix</code></td></tr>
+  <tr><td>Перевірка меж</td><td>кожен масив окремо (виняток <code>ArrayIndexOutOfBounds</code>)</td><td>єдина у <code>checkBounds</code></td></tr>
+  <tr><td>Копія поля</td><td>копіювати кожен рядок</td><td>додати метод <code>copy()</code>, що викликає <code>copyOf()</code> один раз</td></tr>
+  <tr><td>Рядки різної довжини</td><td>можливі</td><td>ні — завжди прямокутник</td></tr>
+</table>
+
+<div class="callout">Для П’ятнашок обидва варіанти рівноправні. Масив масивів простіший для старту, <code>Matrix</code> — зручніша основа, коли в поля з’являтимуться перевірки, копії та інші дії: на цьому ж полі ви будуватимете наступні програми курсу.</div>
+
+<h2>5. Практика</h2>
+
+<div class="callout">1) Додайте у вивід вертикальні межі <code>|</code> між клітинками. 2) Надрукуйте поле «транспонованим» — поміняйте місцями зовнішній і внутрішній цикли й подивіться, що вийде. 3) Об’єднайте з уроком 12: згенеруйте <code>makeSolvableBoard()</code> і надрукуйте його.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-embed"><iframe src="https://pl.kotl.in/G3Ry8ZQZo?theme=darcula" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/G3Ry8ZQZo?theme=darcula" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<h2>Підсумок модуля</h2>
+
+<ul>
+  <li>масиви: <code>arrayOf</code>, <code>IntArray</code>, індексація, копії й аліасинг, матриці та зубчасті масиви;</li>
+  <li>діапазони (<code>..</code>, <code>until</code>, <code>..&lt;</code>, <code>downTo</code>, <code>step</code>) і цикли <code>for</code>, <code>while</code>, <code>do-while</code>, <code>repeat</code>, <code>break</code>/<code>continue</code>/мітки;</li>
+  <li>алгоритми: лінійний пошук, підрахунок, сума, мінімум/максимум, бульбашка, бінарний пошук;</li>
+  <li>матриця на страйдах, оператор індексації <code>m[r, c]</code>, інверсії та розв’язуваність П’ятнашок, друк поля.</li>
+</ul>
+
+<p>У наступному модулі — <a href="../../m04-functions/lessons/index.html">«Функції»</a>: ви систематично розберете те, що тут ми лише використовували за шаблоном (<code>fun</code>, параметри, лямбди).</p>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0003-alhorytmy-strajdy-pyatnashky.html">«Алгоритми, страйди, П’ятнашки — шпаргалка»</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0012-pyatnashky-inversii.html">← Попередній урок</a> · <a href="../../m04-functions/lessons/index.html">Наступний модуль: Функції →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

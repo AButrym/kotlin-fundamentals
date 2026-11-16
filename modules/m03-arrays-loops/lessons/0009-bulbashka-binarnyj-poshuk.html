@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 9: Сортування бульбашкою та бінарний пошук</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Цикли та масиви» · Урок 9 з 13 · ~10 хв</p>
+  <h1>Сортування бульбашкою та бінарний пошук</h1>
+  <p class="subtitle">Обміни, інваріант діапазону, логарифмічний пошук.</p>
+</header>
+
+<h2>1. Сортування бульбашкою</h2>
+
+<p><a href="../../../glossary/index.html#bubble-sort">Сортування бульбашкою</a>: проходимо масивом і міняємо місцями сусідні елементи, що стоять не в порядку. Після першого проходу найбільший елемент «спливає» в кінець, після другого — другий за величиною тощо.</p>
+
+<pre><code>fun bubbleSort(a: IntArray) {
+    for (pass in 0 until a.size - 1) {
+        var swapped = false
+        for (i in 0 until a.size - 1 - pass) {
+            if (a[i] &gt; a[i + 1]) {
+                val t = a[i]          // обмін через тимчасову змінну
+                a[i] = a[i + 1]
+                a[i + 1] = t
+                swapped = true
+            }
+        }
+        if (!swapped) break           // обмінів не було — масив уже впорядкований
+    }
+}</code></pre>
+
+<p>Приклад для <code>[5, 2, 4, 1, 3]</code>:</p>
+
+<table>
+  <tr><th>Прохід</th><th>Масив після проходу</th></tr>
+  <tr><td>1</td><td><code>[2, 4, 1, 3, 5]</code></td></tr>
+  <tr><td>2</td><td><code>[2, 1, 3, 4, 5]</code></td></tr>
+  <tr><td>3</td><td><code>[1, 2, 3, 4, 5]</code></td></tr>
+  <tr><td>4</td><td>обмінів немає → вихід</td></tr>
+</table>
+
+<ul>
+  <li>Внутрішній цикл щоразу коротший (<code>- pass</code>): хвіст уже відсортований.</li>
+  <li>Функція змінює <strong>той самий масив</strong>, що їй передали (пригадайте аліасинг з уроку 2), тому нічого не повертає.</li>
+  <li>Складність <strong>O(n²)</strong> — для навчання чудово, для великих даних є швидші алгоритми.</li>
+</ul>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Що опиниться в кінці масиву <code>[4, 1, 3, 2]</code> після <strong>першого</strong> проходу бульбашки?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>1</code></button>
+    <button class="quiz-option" data-choice="B"><code>4</code></button>
+    <button class="quiz-option" data-choice="C"><code>2</code></button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: найбільший елемент «спливає» вправо за один прохід." data-wrong="Ні: після першого проходу в кінці стоїть найбільше значення — тут `4`."></p>
+</div>
+
+<h2>2. Бінарний пошук</h2>
+
+<p>Якщо масив <strong>відсортований</strong>, шукати можна швидше: беремо середній елемент і відкидаємо половину, де шуканого точно немає. <a href="../../../glossary/index.html#binary-search">Бінарний пошук</a> підтримує діапазон <code>lo..hi</code>, у якому ще може бути відповідь.</p>
+
+<pre><code>fun binarySearchIndex(a: IntArray, target: Int): Int {
+    var lo = 0
+    var hi = a.size - 1
+    while (lo &lt;= hi) {
+        val mid = lo + (hi - lo) / 2
+        when {
+            a[mid] == target -&gt; return mid
+            a[mid] &lt; target  -&gt; lo = mid + 1   // шукаємо праворуч
+            else             -&gt; hi = mid - 1   // шукаємо ліворуч
+        }
+    }
+    return -1
+}</code></pre>
+
+<p>Для <code>[1, 3, 5, 7, 9, 11, 13, 15]</code> і цілі <code>11</code>: перший <code>mid</code> = 3 (значення <code>7</code> < 11) → <code>lo = 4</code>; другий <code>mid</code> = 5 (значення <code>11</code>) → знайдено, індекс 5, усього 2 кроки.</p>
+
+<div class="callout">Формула <code>lo + (hi - lo) / 2</code> дає той самий результат, що й <code>(lo + hi) / 2</code>, але не переповнює <code>Int</code> для дуже великих масивів. А кожен крок зменшує діапазон удвічі, тож складність — <strong>O(log n)</strong>: приблизно 20 кроків на мільйон елементів.</div>
+
+<div class="quiz" data-correct="A">
+  <p class="quiz-q">Приблизно скільки кроків потрібно бінарному пошуку для масиву з 1 000 000 елементів?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">≈ 20</button>
+    <button class="quiz-option" data-choice="B">≈ 1000</button>
+    <button class="quiz-option" data-choice="C">≈ 500 000</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: log₂(1 000 000) ≈ 20." data-wrong="Ні: діапазон щоразу скорочується вдвічі, тому кроків лише близько 20."></p>
+</div>
+
+<div class="warn">Бінарний пошук <strong>працює лише на відсортованому</strong> масиві. На невпорядкованому він поверне довільний результат без жодної помилки.</div>
+
+<h2>3. Практика</h2>
+
+<div class="callout">Модифікуйте <code>bubbleSort</code> так, щоб сортувати за <strong>спаданням</strong>. Потім перевірте <code>binarySearchIndex</code> на масиві з одним елементом і на порожньому масиві.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-embed"><iframe src="https://pl.kotl.in/iiHNr_VuK?theme=darcula" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/iiHNr_VuK?theme=darcula" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0003-alhorytmy-strajdy-pyatnashky.html">«Алгоритми, страйди, П’ятнашки — шпаргалка»</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0008-linijnyj-poshuk-pidrakhunok.html">← Попередній урок</a> · <a href="0010-strajdy.html">Наступний урок: Матриця в одновимірному масиві: страйди →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

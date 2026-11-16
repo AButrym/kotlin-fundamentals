@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Знайомство з колекціями: List, Set, Map</title>
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<main>
+
+<a class="back-link" href="index.html">← Усі уроки</a>
+<p class="eyebrow">Kotlin Collections · Урок 1 з 9</p>
+<h1>Знайомство з колекціями: List, Set, Map</h1>
+
+<div class="callout callout--known">
+  <span class="callout-label">Що ви вже знаєте</span>
+  <p>Ви вже вмієте писати функції, лямбди, оголошувати змінні (<code>var</code>/<code>val</code>), користуватись типами даних та класами. Колекції — це наступний крок: спосіб працювати не з одним значенням, а з цілою групою значень одразу.</p>
+</div>
+
+<p>Уявіть, що вам потрібно зберегти імена 30 студентів групи. Створювати 30 окремих змінних (<code>val student1 = "Оля"</code>, <code>val student2 = "Максим"</code>...) — це не працює. Потрібна структура, яка тримає багато значень одного типу і дозволяє з ними працювати як з єдиним цілим. Це і є <strong>колекція</strong>.</p>
+
+<h2>Три основні типи колекцій</h2>
+
+<p>У стандартній бібліотеці Kotlin є три головні типи колекцій. Кожен вирішує свою задачу:</p>
+
+<table>
+  <tr><th>Тип</th><th>Що гарантує</th><th>Приклад використання</th></tr>
+  <tr><td><code>List</code></td><td>Порядок елементів, дублікати дозволені</td><td>Список товарів у чеку</td></tr>
+  <tr><td><code>Set</code></td><td>Кожен елемент унікальний</td><td>Список email, на які вже надіслано лист</td></tr>
+  <tr><td><code>Map</code></td><td>Пари "ключ → значення", ключі унікальні</td><td>Словник: логін → пароль</td></tr>
+</table>
+
+<pre><code>val purchases = listOf("хліб", "молоко", "хліб")       // List: порядок + дублікати ОК
+val notifiedEmails = setOf("a@x.com", "b@x.com")        // Set: тільки унікальні
+val passwords = mapOf("ann" to "1234", "bob" to "0000") // Map: ключ -> значення
+</code></pre>
+
+<p>Це схоже на масив (<code>Array</code>), який ви вже могли зустрічати, але колекції в Kotlin набагато зручніші: у них є десятки вбудованих функцій (побачимо у наступних уроках), і вони не завжди мають фіксований розмір.</p>
+
+<h2>Read-only проти mutable</h2>
+
+<p>У Kotlin майже кожен тип колекції існує у двох варіантах:</p>
+
+<ul>
+  <li><strong>Read-only</strong> (<code>List</code>, <code>Set</code>, <code>Map</code>) — інтерфейс, який дає тільки методи для <em>читання</em>: розмір, доступ до елементів, перевірку наявності.</li>
+  <li><strong>Mutable</strong> (<code>MutableList</code>, <code>MutableSet</code>, <code>MutableMap</code>) — усе те саме, плюс методи для <em>зміни</em>: додати, видалити, оновити.</li>
+</ul>
+
+<pre><code>val fixed = listOf(1, 2, 3)          // тільки читання
+val changeable = mutableListOf(1, 2, 3)
+changeable.add(4)                     // OK
+// fixed.add(4)                       // помилка компіляції: немає такого методу
+</code></pre>
+
+<div class="callout callout--pitfall">
+  <span class="callout-label">Типова пастка</span>
+  <p><code>List</code> не завжди означає "об'єкт, який неможливо змінити". Це означає лише "у мене немає методів для зміни <em>через цю змінну</em>". Хтось інший, тримаючи ту саму колекцію як <code>MutableList</code>, може її змінити — і ваш <code>List</code> побачить ці зміни. До справжньої незмінності (immutability) ми повернемось в уроці 7.</p>
+</div>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Яка колекція гарантує, що всі її елементи будуть унікальними?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">List</button>
+    <button class="quiz-option" data-choice="B">Set</button>
+    <button class="quiz-option" data-choice="C">Map</button>
+    <button class="quiz-option" data-choice="D">Array</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — Set відкидає дублікати автоматично." data-wrong="Ні. Перевірте таблицю вище: тільки один тип гарантує унікальність елементів."></p>
+</div>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Яке з цих оголошень створює колекцію, до якої можна пізніше додати елемент?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>listOf(1, 2, 3)</code></button>
+    <button class="quiz-option" data-choice="B"><code>mutableListOf(1, 2, 3)</code></button>
+    <button class="quiz-option" data-choice="C"><code>setOf(1, 2, 3)</code></button>
+    <button class="quiz-option" data-choice="D"><code>mapOf(1 to 2)</code></button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — mutableListOf() дає MutableList з методом add()." data-wrong="Ні. Тільки один варіант дає mutable-тип, у якого є метод для додавання елементів."></p>
+</div>
+
+<div class="callout callout--source">
+  <span class="callout-label">Головне джерело</span>
+  <p><a href="https://kotlinlang.org/docs/collections-overview.html" target="_blank" rel="noopener">Kotlin Docs: Collections overview</a> — офіційний опис List/Set/Map та read-only vs mutable інтерфейсів. Додатково: <a href="https://typealias.com/start/kotlin-collections/" target="_blank" rel="noopener">typealias.com — Collections: Lists and Sets</a> для доступного вступного викладу.</p>
+</div>
+
+<div class="callout callout--ask">
+  <span class="callout-label">Застрягли?</span>
+  <p>Це нормально, якщо різниця між List і MutableList поки не до кінця "клікнула". Запитайте свого викладача/агента — уточнююче питання зараз заощадить час пізніше.</p>
+</div>
+
+<div class="lesson-nav">
+  <span></span>
+  <a href="index.html">Усі уроки</a>
+  <a href="0002-list-u-detaliakh.html">Наступний: List у деталях →</a>
+</div>
+
+</main>
+<script src="../../../assets/quiz.js" defer></script>
+</body>
+</html>

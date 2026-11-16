@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Довідка: Алгоритми, страйди, П’ятнашки — шпаргалка</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="../lessons/index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Цикли та масиви» · Довідка</p>
+  <h1>Алгоритми, страйди, П’ятнашки — шпаргалка</h1>
+  <p class="subtitle">Для уроків 8–13.</p>
+</header>
+
+<h2>1. Шаблони обходу</h2>
+
+<table>
+  <tr><th>Задача</th><th>Шаблон</th></tr>
+  <tr><td>лінійний пошук</td><td><code>for (i in a.indices) if (a[i] == t) return i</code> … <code>return -1</code></td></tr>
+  <tr><td>підрахунок за умовою</td><td><code>var c = 0; for (x in a) if (умова(x)) c++</code></td></tr>
+  <tr><td>сума</td><td><code>var s = 0; for (x in a) s += x</code></td></tr>
+  <tr><td>мінімум / максимум</td><td><code>var best = a[0]; for (i in 1 until a.size) …</code></td></tr>
+</table>
+
+<h2>2. Бульбашка та бінарний пошук</h2>
+
+<pre><code>// бульбашка: O(n²), змінює масив на місці
+for (pass in 0 until a.size - 1) {
+    var swapped = false
+    for (i in 0 until a.size - 1 - pass) {
+        if (a[i] &gt; a[i + 1]) { val t = a[i]; a[i] = a[i + 1]; a[i + 1] = t; swapped = true }
+    }
+    if (!swapped) break
+}
+
+// бінарний пошук: O(log n), масив відсортований
+var lo = 0; var hi = a.size - 1
+while (lo &lt;= hi) {
+    val mid = lo + (hi - lo) / 2
+    when {
+        a[mid] == target -&gt; return mid
+        a[mid] &lt; target  -&gt; lo = mid + 1
+        else             -&gt; hi = mid - 1
+    }
+}
+return -1</code></pre>
+
+<h2>3. Страйди</h2>
+
+<pre><code>index = row * cols + col
+row   = index / cols
+col   = index % cols</code></pre>
+
+<pre><code>class Matrix(val rows: Int, val cols: Int) {
+    private val data = IntArray(rows * cols)
+    private fun checkBounds(row: Int, col: Int) {
+        require(row in 0 until rows &amp;&amp; col in 0 until cols) { "($row, $col) поза межами" }
+    }
+    operator fun get(row: Int, col: Int): Int { checkBounds(row, col); return data[row * cols + col] }
+    operator fun set(row: Int, col: Int, value: Int) { checkBounds(row, col); data[row * cols + col] = value }
+}</code></pre>
+
+<table>
+  <tr><th>Ви пишете</th><th>Перекладається в</th></tr>
+  <tr><td><code>m[r, c]</code></td><td><code>m.get(r, c)</code></td></tr>
+  <tr><td><code>m[r, c] = v</code></td><td><code>m.set(r, c, v)</code></td></tr>
+  <tr><td><code>m[r, c] += 1</code></td><td><code>m.set(r, c, m.get(r, c) + 1)</code></td></tr>
+</table>
+
+<h2>4. П’ятнашки 4×4</h2>
+
+<ul>
+  <li>Поле — перестановка <code>1…16</code>, <code>16</code> — порожня клітинка; розв’язане <code>1, 2, …, 16</code>.</li>
+  <li><a href="../../../glossary/index.html#inversion">Інверсії</a> — пари <code>i &lt; j</code>, <code>a[i] &gt; a[j]</code>, <strong>без</strong> <code>16</code>.</li>
+  <li>Розв’язуване ⇔ <code>(інверсії + рядок порожньої знизу (1 = нижній))</code> — <strong>непарне</strong>.</li>
+  <li>Генерація: Фішер–Йетс → якщо нерозв’язуване, поміняти дві не порожні плитки.</li>
+  <li>Друк: зовнішній цикл по рядках, внутрішній по клітинках, <code>println()</code> після внутрішнього, <code>padStart(3)</code> для вирівнювання.</li>
+</ul>
+
+</div>
+</body>
+</html>

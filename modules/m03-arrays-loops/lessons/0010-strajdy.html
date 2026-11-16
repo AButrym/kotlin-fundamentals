@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 10: Матриця в одновимірному масиві: страйди</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Цикли та масиви» · Урок 10 з 13 · ~8 хв</p>
+  <h1>Матриця в одновимірному масиві: страйди</h1>
+  <p class="subtitle">index = row * cols + col.</p>
+</header>
+
+<h2>1. Проблема масиву масивів</h2>
+
+<p><code>Array&lt;IntArray&gt;</code> — це масив <strong>посилань</strong> на окремі масиви. Кожен рядок — окремий об’єкт у пам’яті, а будь-яка операція над усією таблицею (копіювання, заповнення, передача) змушує окремо обходити рядки. Альтернатива — зберегти всю таблицю в <strong>одному</strong> <code>IntArray</code> розміру <code>rows * cols</code>, рядок за рядком.</p>
+
+<pre><code>// матриця 3 × 4 розкладена в один масив:
+//  рядок 0: індекси 0..3
+//  рядок 1: індекси 4..7
+//  рядок 2: індекси 8..11
+val data = IntArray(3 * 4)</code></pre>
+
+<h2>2. Формула страйда</h2>
+
+<p><a href="../../../glossary/index.html#stride">Страйд</a> (крок) — кількість елементів між початками сусідніх рядків; для «рядок за рядком» він дорівнює кількості стовпців <code>cols</code>.</p>
+
+<pre><code>index = row * cols + col
+
+row = index / cols      // цілочисельне ділення
+col = index % cols      // остача</code></pre>
+
+<table>
+  <tr><th>(row, col)</th><th>Обчислення при cols = 4</th><th>index</th></tr>
+  <tr><td>(0, 0)</td><td>0 · 4 + 0</td><td>0</td></tr>
+  <tr><td>(1, 2)</td><td>1 · 4 + 2</td><td>6</td></tr>
+  <tr><td>(2, 1)</td><td>2 · 4 + 1</td><td>9</td></tr>
+  <tr><td>(2, 3)</td><td>2 · 4 + 3</td><td>11</td></tr>
+</table>
+
+<div class="quiz" data-answer="2">
+  <div class="q">Матриця має <code>cols = 5</code>. Який <code>row</code> у елемента з індексом <code>13</code>? (<code>13 / 5</code> цілочисельно)</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="11">
+  <div class="q">У матриці <code>cols = 4</code> який індекс у масиві має клітинка (2, 3)?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>3. Обхід і заповнення</h2>
+
+<pre><code>val rows = 3
+val cols = 4
+val data = IntArray(rows * cols)
+
+for (r in 0 until rows) {
+    for (c in 0 until cols) {
+        data[r * cols + c] = r * 10 + c
+    }
+}
+println(data.contentToString())   // [0, 1, 2, 3, 10, 11, 12, 13, 20, 21, 22, 23]</code></pre>
+
+<p>Хочете ітерувати рівно один раз по всіх клітинках без пар <code>(r, c)</code> — достатньо <code>for (i in data.indices)</code>, а <code>r</code>/<code>c</code> обчислити за формулою обернено.</p>
+
+<h2>4. Порівняння двох подань</h2>
+
+<table>
+  <tr><th></th><th><code>Array&lt;IntArray&gt;</code></th><th>один <code>IntArray</code> + страйд</th></tr>
+  <tr><td>Звернення</td><td><code>grid[r][c]</code></td><td><code>data[r * cols + c]</code></td></tr>
+  <tr><td>Об’єктів у пам’яті</td><td>1 + <code>rows</code></td><td>1</td></tr>
+  <tr><td>Копіювання</td><td>потрібно копіювати кожен рядок</td><td>один <code>copyOf()</code></td></tr>
+  <tr><td>Рядки різної довжини</td><td>так (зубчасті)</td><td>ні — завжди прямокутник</td></tr>
+  <tr><td>Ризик помилки у формулі</td><td>немає</td><td>є (виправимо в наступному уроці)</td></tr>
+</table>
+
+<div class="warn">Без перевірки меж <code>data[r * cols + c]</code> легко прочитати <strong>чужу</strong> клітинку: для <code>cols = 4</code> пара <code>(0, 5)</code> дасть індекс 5 — це клітинка <code>(1, 1)</code>, і жодної помилки не буде.</div>
+
+<div class="callout">У наступному уроці сховаємо формулу всередині класу, а доступ зробимо таким же зручним, як <code>grid[r][c]</code> — тобто <code>m[r, c]</code>.</div>
+
+<h2>5. Практика</h2>
+
+<div class="callout">Заповніть одновимірний масив для матриці 3×4 числами <code>r * 10 + c</code> і виведіть його рядками, використовуючи формулу. Окремо для індексу <code>7</code> обчисліть <code>row</code> та <code>col</code> двома рядками <code>val</code>.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-embed"><iframe src="https://pl.kotl.in/2dhQs9JPa?theme=darcula" loading="lazy"></iframe></div>
+<p class="playground-note">Не завантажується? <a href="https://pl.kotl.in/2dhQs9JPa?theme=darcula" target="_blank" rel="noopener">Відкрити напряму →</a></p>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0003-alhorytmy-strajdy-pyatnashky.html">«Алгоритми, страйди, П’ятнашки — шпаргалка»</a>.</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0009-bulbashka-binarnyj-poshuk.html">← Попередній урок</a> · <a href="0011-operator-indeksatsii.html">Наступний урок: Клас Matrix та оператор індексації →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

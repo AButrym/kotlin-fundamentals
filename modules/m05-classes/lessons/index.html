@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Kotlin Fundamentals — Класи</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<nav class="breadcrumbs"><a href="../../../index.html">Карта курсу</a><span class="sep">/</span>М05 · Класи · <a href="../../../glossary/index.html">Індекс термінів</a></nav>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals</p>
+  <h1>Модуль «Класи»</h1>
+  <p class="subtitle">11 коротких уроків (≤10 хв кожен). Проходьте по порядку — кожен наступний спирається на попередній. Модуль завершується класом-обгорткою для гри «П’ятнашки».</p>
+</header>
+
+<div class="callout"><strong>Що потрібно знати перед початком:</strong> типи та умови, цикли й масиви (модуль 3), функції й лямбди (модуль 4). Клас <code>Matrix</code> із модуля 3 ви вже бачили — тепер вивчимо класи систематично.</div>
+
+<h2>Блок 1 · Основи класу</h2>
+<table>
+  <tr><th>№</th><th>Урок</th><th>Що покриває</th><th>Час</th></tr>
+  <tr>
+    <td>1</td>
+    <td><a href="0001-klas-ta-obyekt.html">Клас і об’єкт</a></td>
+    <td>class, об’єкт, властивості val/var.</td>
+    <td>~6 хв</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><a href="0002-konstruktor-init.html">Конструктор і блок init</a></td>
+    <td>Первинний конструктор, значення за замовчуванням, init, додатковий конструктор.</td>
+    <td>~8 хв</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><a href="0003-metody-this-tostring.html">Методи, this і toString</a></td>
+    <td>Методи, this, toString (override — як шаблон).</td>
+    <td>~8 хв</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td><a href="0004-inkapsulyatsiya-vlastyvosti.html">Інкапсуляція та властивості з логікою</a></td>
+    <td>private, private set, обчислювані властивості, власний setter і field.</td>
+    <td>~9 хв</td>
+  </tr>
+</table>
+<h2>Блок 2 · Об’єкти та спільні члени класу</h2>
+<table>
+  <tr><th>№</th><th>Урок</th><th>Що покриває</th><th>Час</th></tr>
+  <tr>
+    <td>5</td>
+    <td><a href="0005-posylannya-ta-rivnist.html">Посилання та рівність об’єктів</a></td>
+    <td>Посилальна семантика, ==, ===, спільні об’єкти як пастка.</td>
+    <td>~8 хв</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td><a href="0006-companion-object.html">Companion object: константи та фабрики</a></td>
+    <td>Мінімум про companion object: const val, фабричні методи, спільний лічильник.</td>
+    <td>~7 хв</td>
+  </tr>
+</table>
+<h2>Блок 3 · Успадкування</h2>
+<table>
+  <tr><th>№</th><th>Урок</th><th>Що покриває</th><th>Час</th></tr>
+  <tr>
+    <td>7</td>
+    <td><a href="0007-uspadkuvannya.html">Успадкування: open, override, super</a></td>
+    <td>open, наслідування конструктора, override, super, Any.</td>
+    <td>~9 хв</td>
+  </tr>
+  <tr>
+    <td>8</td>
+    <td><a href="0008-polimorfizm.html">Поліморфізм, is і smart cast</a></td>
+    <td>Змінна базового типу, список різних об’єктів, is і smart cast.</td>
+    <td>~8 хв</td>
+  </tr>
+</table>
+<h2>Блок 4 · data class і посилання на функції</h2>
+<table>
+  <tr><th>№</th><th>Урок</th><th>Що покриває</th><th>Час</th></tr>
+  <tr>
+    <td>9</td>
+    <td><a href="0009-data-class.html">data class</a></td>
+    <td>toString/equals/hashCode/copy/componentN, деструктуризація.</td>
+    <td>~9 хв</td>
+  </tr>
+  <tr>
+    <td>10</td>
+    <td><a href="0010-posylannya-na-konstruktory-metody.html">Посилання на конструктори та методи</a></td>
+    <td>::Person, Person::greet, obj::method — те, що було відкладене в модулі «Функції».</td>
+    <td>~7 хв</td>
+  </tr>
+</table>
+<h2>Блок 5 · Підсумок: «П’ятнашки»</h2>
+<table>
+  <tr><th>№</th><th>Урок</th><th>Що покриває</th><th>Час</th></tr>
+  <tr>
+    <td>11</td>
+    <td><a href="0011-pyatnashky-klas-board.html">Підсумок: «П’ятнашки» як клас</a></td>
+    <td>Клас Board із фабриками, приватним станом і методами; повторення модуля.</td>
+    <td>~10 хв</td>
+  </tr>
+</table>
+
+<h3 style="margin-top:32px">Що навмисно відкладено</h3>
+<p>Модуль дає мінімум, потрібний для колекцій: класи, успадкування, <code>data class</code> та companion object «на мінімальному рівні». Просунуті теми лишаються на пізніше — на них дано посилання на <a href="../../../glossary/index.html">індекс термінів</a>:</p>
+<table>
+  <tr><th>Тема</th><th>Де вивчатиметься</th></tr>
+  <tr><td>абстрактні класи, інтерфейси, enum-класи</td><td><a href="../../../glossary/index.html#abstract-class">абстрактний клас</a> · <a href="../../../glossary/index.html#interface">інтерфейс</a> · <a href="../../../glossary/index.html#enum-class">enum</a> — модуль 7</td></tr>
+  <tr><td>оголошення <code>object</code> (singleton), companion: деталі</td><td><a href="../../../glossary/index.html#object">object</a> · <a href="../../../glossary/index.html#companion-details">companion</a> — модуль 7</td></tr>
+  <tr><td><code>protected</code>, <code>internal</code>, вкладені класи</td><td><a href="../../../glossary/index.html#visibility-modifiers">видимість</a> · <a href="../../../glossary/index.html#nested-class">вкладені класи</a> — модуль 7</td></tr>
+  <tr><td>extension-функції, перевантаження операторів</td><td><a href="../../../glossary/index.html#extension-function">модуль 8</a></td></tr>
+  <tr><td>generics, винятки, sealed</td><td><a href="../../../glossary/index.html#generics">generics</a> · <a href="../../../glossary/index.html#exception">винятки</a> · <a href="../../../glossary/index.html#sealed">sealed</a> — модуль 9</td></tr>
+</table>
+
+<h3 style="margin-top:32px">Довідкові матеріали</h3>
+<table>
+  <tr><th>Документ</th><th>Опис</th></tr>
+  <tr><td><a href="../reference/0001-klasy-ta-obyekty.html">Класи та об’єкти — шпаргалка</a></td><td>Клас, конструктор, методи, видимість, властивості (уроки 1–4)</td></tr>
+  <tr><td><a href="../reference/0002-posylannya-companion-fn-refs.html">Посилання, companion, посилання на функції — шпаргалка</a></td><td>Посилання на об’єкти, <code>==</code>/<code>===</code>, companion, посилання на функції, <code>Board</code> (уроки 5, 6, 10, 11)</td></tr>
+  <tr><td><a href="../reference/0003-uspadkuvannya-data-class.html">Успадкування, поліморфізм, data class — шпаргалка</a></td><td>open/override, поліморфізм, <code>data class</code>, перелік відкладеного (уроки 7–9)</td></tr>
+</table>
+
+<p><a href="../../m04-functions/lessons/index.html">← Попередній модуль: Функції</a> · <a href="../../m06-collections/lessons/index.html">Наступний модуль: Колекції →</a></p>
+
+</div>
+</body>
+</html>

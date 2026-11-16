@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Set та Map</title>
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<main>
+
+<a class="back-link" href="index.html">← Усі уроки</a>
+<p class="eyebrow">Kotlin Collections · Урок 3 з 9</p>
+<h1>Set та Map</h1>
+
+<div class="callout callout--known">
+  <span class="callout-label">Що ви вже знаєте</span>
+  <p>List ми розібрали детально. Set та Map працюють інакше: Set дбає про унікальність, Map зберігає пари "ключ → значення".</p>
+</div>
+
+<h2>Set: тільки унікальні елементи</h2>
+
+<pre><code>val a = setOf(1, 2, 2, 3, 3, 3)
+println(a)        // [1, 2, 3] — дублікати відкинуто
+println(a.size)     // 3
+
+val mutable = mutableSetOf("x", "y")
+mutable.add("x")     // нічого не зміниться, "x" вже є
+mutable.add("z")     // тепер {x, y, z}
+</code></pre>
+
+<p><code>setOf()</code> в Kotlin за замовчуванням зберігає порядок додавання елементів (це <code>LinkedHashSet</code> під капотом) — тобто Set в Kotlin не "перемішує" елементи, як можна очікувати з математичного визначення множини.</p>
+
+<h3>Операції над множинами</h3>
+
+<pre><code>val fansOfKotlin = setOf("Оля", "Максим", "Ірина")
+val fansOfJava = setOf("Максим", "Петро")
+
+fansOfKotlin union fansOfJava        // {Оля, Максим, Ірина, Петро}
+fansOfKotlin intersect fansOfJava    // {Максим} — спільні елементи
+fansOfKotlin subtract fansOfJava     // {Оля, Ірина} — тільки в першому
+</code></pre>
+
+<h2>Map: пари ключ-значення</h2>
+
+<pre><code>val ages = mapOf("Оля" to 20, "Максим" to 22)
+
+ages["Оля"]             // 20
+ages["Хтось"]            // null — ключа немає, і немає помилки
+ages.getValue("Оля")     // 20
+ages.getValue("Хтось")    // NoSuchElementException!
+ages.getOrDefault("Хтось", 0)  // 0
+</code></pre>
+
+<div class="callout callout--pitfall">
+  <span class="callout-label">Типова пастка</span>
+  <p>Доступ через <code>map[key]</code> повертає <code>null</code>, якщо ключа немає — і компілятор змусить вас це врахувати (тип буде <code>V?</code>). <code>getValue()</code> натомість кидає виняток. Обирайте свідомо, залежно від того, чи відсутність ключа — це нормальна ситуація, чи помилка програми.</p>
+</div>
+
+<h3>Зміна mutable-мапи та ітерація</h3>
+
+<pre><code>val stock = mutableMapOf("хліб" to 5, "молоко" to 3)
+
+stock["хліб"] = 4          // оновити значення
+stock["яйця"] = 10          // додати нову пару
+stock.remove("молоко")
+
+for ((product, qty) in stock) {
+    println("$product: $qty")
+}
+</code></pre>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Скільки елементів буде у <code>setOf(5, 5, 5, 6).size</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">4</button>
+    <button class="quiz-option" data-choice="B">2</button>
+    <button class="quiz-option" data-choice="C">1</button>
+    <button class="quiz-option" data-choice="D">0</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — Set зберігає тільки унікальні значення: 5 та 6." data-wrong="Ні. Set відкидає дублікати, у вхідних даних лише два унікальних значення."></p>
+</div>
+
+<div class="quiz" data-correct="C">
+  <p class="quiz-q">Що станеться при виклику <code>mapOf("a" to 1).getValue("z")</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">поверне 1</button>
+    <button class="quiz-option" data-choice="B">поверне null</button>
+    <button class="quiz-option" data-choice="C">кине виняток</button>
+    <button class="quiz-option" data-choice="D">поверне 0</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — getValue() кидає NoSuchElementException, якщо ключа немає." data-wrong="Ні. Пригадайте пастку вище: getValue() не повертає null, вона кидає виняток."></p>
+</div>
+
+<div class="callout callout--source">
+  <span class="callout-label">Головне джерело</span>
+  <p><a href="https://typealias.com/start/kotlin-maps/" target="_blank" rel="noopener">typealias.com — Collections: Maps</a> для доступного вступу. Офіційно: <a href="https://kotlinlang.org/docs/set-operations.html" target="_blank" rel="noopener">Kotlin Docs: Set-specific operations</a> та <a href="https://kotlinlang.org/docs/map-operations.html" target="_blank" rel="noopener">Map-specific operations</a>.</p>
+</div>
+
+<div class="callout callout--ask">
+  <span class="callout-label">Застрягли?</span>
+  <p>Плутанина між <code>map[key]</code> (null) та <code>getValue()</code> (виняток) — одна з найчастіших помилок новачків. Якщо не впевнені, який варіант обрати у своєму коді — покажіть його викладачу/агенту.</p>
+</div>
+
+<div class="lesson-nav">
+  <a href="0002-list-u-detaliakh.html">← List у деталях</a>
+  <a href="index.html">Усі уроки</a>
+  <a href="0004-funktsionalni-operatsii-1.html">Наступний: map, filter, forEach →</a>
+</div>
+
+</main>
+<script src="../../../assets/quiz.js" defer></script>
+</body>
+</html>

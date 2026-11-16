@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 2: Конструктор і блок init</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Класи» · Урок 2 з 11 · ~8 хв</p>
+  <h1>Конструктор і блок init</h1>
+  <p class="subtitle">Як задавати початкові значення при створенні об’єкта.</p>
+</header>
+
+<h2>1. Первинний конструктор</h2>
+
+<p>Писати <code>a.x = 3; a.y = 4</code> після кожного створення незручно — легко забути ініціалізувати. Значення краще передавати <strong>при створенні</strong>. Для цього <a href="../../../glossary/index.html#constructor">первинний конструктор</a> (primary constructor) пишуть у дужках одразу після імені класу:</p>
+
+<pre><code>class Point(val x: Int, val y: Int)
+
+val p = Point(3, 4)
+println("${p.x}, ${p.y}")   // 3, 4</code></pre>
+
+<p>Слова <code>val</code>/<code>var</code> перед параметром конструктора <strong>одночасно оголошують властивість</strong> з тим самим іменем. Тіло класу <code>{ }</code> не обов’язкове, якщо воно порожнє.</p>
+
+<p>Параметри конструктора — це звичайні параметри функції, тож працюють <a href="../../../glossary/index.html#default-argument">значення за замовчуванням</a> та <a href="../../../glossary/index.html#named-argument">іменовані аргументи</a> з модуля «Функції»:</p>
+
+<pre><code>class Rectangle(val width: Int, val height: Int, val label: String = "rect")
+
+val r1 = Rectangle(2, 3)
+val r2 = Rectangle(height = 5, width = 1, label = "wide")</code></pre>
+
+<div class="quiz" data-answer="3|три">
+  <div class="q">Скільки властивостей має клас <code>Rectangle(val width: Int, val height: Int, val label: String = "rect")</code>?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>2. Параметр без val/var — не властивість</h2>
+
+<p>Якщо перед параметром немає <code>val</code> чи <code>var</code>, це лише параметр: його видно під час створення об’єкта, але після цього він зникає.</p>
+
+<pre><code>class Person(val name: String, birthYear: Int) {
+    val age = 2026 - birthYear    // birthYear можна використати в ініціалізаторі
+}
+
+val person = Person("Оля", 2000)
+println(person.age)         // 26
+// println(person.birthYear)   // помилка: такої властивості немає</code></pre>
+
+<h2>3. Блок init: перевірка при створенні</h2>
+
+<p>Блок <a href="../../../glossary/index.html#init-block">init</a> виконується щоразу при створенні об’єкта, відразу після первинного конструктора. Зручно для перевірки вхідних даних: функція <code>require(умова) { "повідомлення" }</code> (ви вже бачили її в <code>Matrix</code>) зупиняє програму, якщо умова хибна. Докладно про <a href="../../../glossary/index.html#exception">винятки</a> — у модулі 9.</p>
+
+<pre><code>class Rectangle(val width: Int, val height: Int) {
+    init {
+        require(width &gt; 0 &amp;&amp; height &gt; 0) { "Сторони мають бути додатними: ${width}x$height" }
+    }
+}
+
+Rectangle(2, 3)    // гаразд
+Rectangle(0, 5)    // IllegalArgumentException: Сторони мають бути додатними: 0x5</code></pre>
+
+<p>Це головна мета <code>init</code>: об’єкт ніколи не опиниться у «зламаному» стані — або створюється коректним, або не створюється взагалі.</p>
+
+<h2>4. Додатковий конструктор</h2>
+
+<p>Іноді потрібен ще один спосіб створення. Додатковий конструктор (secondary constructor) оголошується ключовим словом <code>constructor</code> і <strong>обов’язково</strong> викликає первинний через <code>this(…)</code>:</p>
+
+<pre><code>class Point(val x: Int, val y: Int) {
+    constructor() : this(0, 0)      // Point() — початок координат
+}</code></pre>
+
+<div class="callout">Додаткові конструктори в Kotlin трапляються рідко: майже завжди достатньо значень за замовчуванням. Якщо ж потрібно створювати об’єкти «іменованими способами» (<code>fromFahrenheit(…)</code>), використовують фабричні методи — урок <a href="0006-companion-object.html">«Companion object»</a>.</div>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Для чого використовують блок <code>init</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">Для оголошення нових методів класу</button>
+    <button class="quiz-option" data-choice="B">Щоб виконати код (наприклад, перевірку даних) при створенні кожного об’єкта</button>
+    <button class="quiz-option" data-choice="C">Щоб заборонити створення об’єктів</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: init виконується при кожному створенні об’єкта — зручно для перевірок та підготовки." data-wrong="Ні: методи оголошують через fun, а init — це код, який виконується при створенні об’єкта."></p>
+</div>
+
+<h2>5. Практика</h2>
+
+<div class="callout">Напишіть клас <code>Student(val name: String, val grade: Int)</code> з перевіркою <code>grade in 1..12</code> у <code>init</code>. Створіть коректного студента й спробуйте створити студента з оцінкою 15. Додайте значення за замовчуванням <code>grade = 1</code> і створіть студента лише з іменем.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-todo" data-slug="m05-l02-constructor-init">
+  <p class="playground-todo-label">🎮 Playground — TODO: створити share-посилання</p>
+  <pre><code>class Point(val x: Int, val y: Int) {
+    constructor() : this(0, 0)      // додатковий конструктор
+}
+
+class Rectangle(val width: Int, val height: Int, val label: String = "rect") {
+    init {
+        require(width &gt; 0 &amp;&amp; height &gt; 0) { "Сторони мають бути додатними: ${width}x$height" }
+        println("Створено $label ${width}x$height")
+    }
+}
+
+class Person(val name: String, birthYear: Int) {
+    val age = 2026 - birthYear      // birthYear — лише параметр, не властивість
+}
+
+fun main() {
+    val p = Point(3, 4)
+    println("${p.x}, ${p.y}")                  // 3, 4
+    val origin = Point()
+    println("${origin.x}, ${origin.y}")        // 0, 0
+
+    val r1 = Rectangle(2, 3)                   // Створено rect 2x3
+    val r2 = Rectangle(height = 5, width = 1, label = "wide")   // Створено wide 1x5
+    println(r1.width * r2.height)              // 10
+
+    val person = Person("Оля", 2000)
+    println("${person.name}, ${person.age}")   // Оля, 26
+    // println(person.birthYear)               // розкоментуйте: помилка
+
+    // val bad = Rectangle(0, 5)               // розкоментуйте: IllegalArgumentException
+}</code></pre>
+</div>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0001-klasy-ta-obyekty.html">«Класи та об’єкти — шпаргалка»</a> (уроки 1–4).</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0001-klas-ta-obyekt.html">← Попередній урок</a> · <a href="0003-metody-this-tostring.html">Наступний урок: Методи, this і toString →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

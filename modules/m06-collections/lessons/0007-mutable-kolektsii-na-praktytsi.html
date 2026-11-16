@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mutable колекції на практиці</title>
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<main>
+
+<a class="back-link" href="index.html">← Усі уроки</a>
+<p class="eyebrow">Kotlin Collections · Урок 7 з 9</p>
+<h1>Mutable колекції на практиці</h1>
+
+<div class="callout callout--known">
+  <span class="callout-label">Що ви вже знаєте</span>
+  <p>В уроці 1 ми зʼясували: <code>List</code> — це лише "немає методів для зміни через цю змінну", а не гарантія незмінності обʼєкта в пам'яті. Зараз побачимо, чому це важливо на практиці.</p>
+</div>
+
+<h2>Копіювання проти спільного посилання</h2>
+
+<pre><code>val original = mutableListOf(1, 2, 3)
+val alias = original          // це НЕ копія! Обидві змінні вказують на той самий обʼєкт
+val copy = original.toMutableList()  // це справжня незалежна копія
+
+alias.add(4)
+println(original)  // [1, 2, 3, 4] — original теж змінився!
+println(copy)        // [1, 2, 3] — copy не торкнулись
+</code></pre>
+
+<div class="callout callout--pitfall">
+  <span class="callout-label">Типова пастка</span>
+  <p>Присвоєння <code>val alias = original</code> не створює нову колекцію — обидві змінні вказують на <em>той самий</em> обʼєкт у пам'яті. Якщо потрібна незалежна копія — явно викликайте <code>toList()</code>, <code>toMutableList()</code>, <code>toSet()</code> чи <code>toMap()</code>.</p>
+</div>
+
+<h2>Той самий фокус з List і MutableList</h2>
+
+<pre><code>val editable: MutableList&lt;Int&gt; = mutableListOf(1, 2, 3)
+val readOnlyView: List&lt;Int&gt; = editable   // "вікно" в той самий обʼєкт, без методів запису
+
+editable.add(4)
+println(readOnlyView)  // [1, 2, 3, 4] — readOnlyView теж бачить зміну!
+</code></pre>
+
+<p>Це і є той нюанс з уроку 1: <code>readOnlyView</code> не має методу <code>add()</code>, але сам обʼєкт позаду нього змінився. <code>List</code> — це обмежений набір прав доступу до обʼєкта, а не гарантія його незмінності.</p>
+
+<h2>Builder-функції</h2>
+
+<pre><code>val report = buildMap {
+    put("total", 600)
+    put("count", 3)
+}
+
+val ids = buildSet {
+    add(1)
+    add(2)
+    add(1)  // дублікат просто ігнориться
+}
+</code></pre>
+
+<p>Builder-функції (<code>buildList</code>, <code>buildSet</code>, <code>buildMap</code>) — це чистий спосіб зібрати колекцію через мутабельний інтерфейс усередині лямбди, а назовні отримати вже "запечатаний" read-only результат — без ризику випадкового аліасингуззовні.</p>
+
+<h2>+= та -= для колекцій</h2>
+
+<pre><code>val list = mutableListOf(1, 2)
+list += 3          // еквівалент list.add(3): змінює той самий обʼєкт
+list -= 1          // еквівалент list.remove(1)
+
+var readOnlyList = listOf(1, 2)
+readOnlyList += 3   // тут += створює НОВИЙ список і присвоює його змінній
+                     // це можливо лише бо readOnlyList оголошено як var
+</code></pre>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Що буде у <code>b</code> після: <code>val a = mutableListOf(1); val b = a; a.add(2)</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>[1]</code></button>
+    <button class="quiz-option" data-choice="B"><code>[1, 2]</code></button>
+    <button class="quiz-option" data-choice="C"><code>[]</code></button>
+    <button class="quiz-option" data-choice="D">помилка</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — b та a вказують на один обʼєкт, тому зміна через a видна й через b." data-wrong="Ні. Пригадайте: val b = a не копіює колекцію, лише посилання."></p>
+</div>
+
+<div class="quiz" data-correct="A">
+  <p class="quiz-q">Як отримати справжню незалежну копію <code>mutableListOf(1, 2, 3)</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>original.toMutableList()</code></button>
+    <button class="quiz-option" data-choice="B"><code>val copy = original</code></button>
+    <button class="quiz-option" data-choice="C"><code>original.also { it }</code></button>
+    <button class="quiz-option" data-choice="D"><code>original.first()</code></button>
+  </div>
+  <p class="quiz-feedback" data-right="Так — toMutableList() (як і toList(), toSet(), toMap()) створює новий незалежний обʼєкт." data-wrong="Ні. Просте присвоєння лише копіює посилання, не сам обʼєкт."></p>
+</div>
+
+<div class="callout callout--source">
+  <span class="callout-label">Головне джерело</span>
+  <p><a href="https://kotlinlang.org/docs/constructing-collections.html" target="_blank" rel="noopener">Kotlin Docs: Constructing collections</a> — розділи про копіювання (<code>toList</code>, <code>toMutableList</code>...) та builder-функції.</p>
+</div>
+
+<div class="callout callout--ask">
+  <span class="callout-label">Застрягли?</span>
+  <p>Аліасинг ("дві змінні — один обʼєкт") — джерело багатьох важко відловлюваних багів навіть у досвідчених розробників. Якщо бачите, що колекція "змінюється сама" — покажіть весь фрагмент коду викладачу/агенту, а не тільки місце, де побачили баг.</p>
+</div>
+
+<div class="lesson-nav">
+  <a href="0006-prosunuti-transformatsii.html">← fold, reduce, flatMap, zip</a>
+  <a href="index.html">Усі уроки</a>
+  <a href="0008-vstup-do-sequences.html">Наступний: Вступ до Sequences →</a>
+</div>
+
+</main>
+<script src="../../../assets/quiz.js" defer></script>
+</body>
+</html>

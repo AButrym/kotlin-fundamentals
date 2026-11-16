@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 4: Інкапсуляція та властивості з логікою</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Класи» · Урок 4 з 11 · ~9 хв</p>
+  <h1>Інкапсуляція та властивості з логікою</h1>
+  <p class="subtitle">Ховаємо внутрішній стан: private, власні getter/setter, обчислювані властивості.</p>
+</header>
+
+<h2>1. Проблема відкритого стану</h2>
+
+<p>Якщо всі властивості відкриті, будь-який код може їх зіпсувати:</p>
+
+<pre><code>class Account(var balance: Int)
+
+val acc = Account(100)
+acc.balance = -999999      // нічого не заважає</code></pre>
+
+<p>Ідея <strong>інкапсуляції</strong>: клас сам відповідає за коректність свого стану й надає для змін лише обережні методи (<code>deposit</code>, <code>withdraw</code>), а «сире» значення ховає.</p>
+
+<h2>2. Видимість: public і private</h2>
+
+<p>За замовчуванням усе в класі <strong>відкрите</strong> (<a href="../../../glossary/index.html#visibility"><code>public</code></a>). Модифікатор <code>private</code> робить властивість чи метод доступними лише всередині цього класу. Ви вже бачили його в <code>Matrix</code>: масив <code>data</code> був <code>private</code>, а працювали з матрицею через <code>m[r, c]</code>. Інші рівні видимості (<code>protected</code>, <code>internal</code>) — у <a href="../../../glossary/index.html#visibility-modifiers">модулі 7</a>.</p>
+
+<h2>3. Читати можна, змінювати — ні: private set</h2>
+
+<p>Часто властивість має бути видимою ззовні для читання, але змінюватися лише методами класу. Для цього сеттер роблять приватним:</p>
+
+<pre><code>class Account(val owner: String, initial: Int) {
+    var balance: Int = initial
+        private set                 // змінювати можна лише всередині класу
+
+    fun deposit(amount: Int) {
+        require(amount &gt; 0) { "Сума має бути додатною" }
+        balance += amount
+    }
+
+    fun withdraw(amount: Int): Boolean {
+        if (amount &lt;= 0 || amount &gt; balance) return false
+        balance -= amount
+        return true
+    }
+}
+
+val acc = Account("Оля", 100)
+acc.deposit(50)
+println(acc.balance)       // 150 — читати можна
+// acc.balance = 1_000_000 // помилка: сеттер private</code></pre>
+
+<div class="quiz" data-answer="false">
+  <div class="q">Що буде, якщо викликати <code>acc.withdraw(500)</code> при балансі 150? Що поверне метод? (true/false)</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>4. Обчислювані властивості</h2>
+
+<p>Властивість може не зберігати значення, а <strong>обчислювати</strong> його при кожному зверненні — для цього після неї пишуть <code>get()</code> (<a href="../../../glossary/index.html#custom-accessor">getter</a>):</p>
+
+<pre><code>class Rectangle(val width: Int, val height: Int) {
+    val area: Int
+        get() = width * height
+    val isSquare: Boolean
+        get() = width == height
+}
+
+val r = Rectangle(3, 4)
+println(r.area)        // 12 — без дужок, як звичайна властивість
+println(r.isSquare)    // false</code></pre>
+
+<p>Ззовні це виглядає як звичайне читання поля, але значення завжди актуальне й окремого поля в об’єкті немає. Порівняйте з методом <code>fun area()</code>: для величин, що «просто описують стан», властивість-вираз читається природніше.</p>
+
+<h2>5. Власний setter і field</h2>
+
+<p>Сеттер можна описати самостійно, щоб відхиляти некоректні значення. Усередині нього приховане «поле» властивості доступне як <code>field</code> (писати <code>target = value</code> не можна — це знову викликало б сеттер і зациклило б програму):</p>
+
+<pre><code>class Thermostat {
+    var target: Int = 20
+        set(value) {
+            if (value in 10..30) field = value
+        }
+}
+
+val t = Thermostat()
+t.target = 50
+println(t.target)    // 20 — некоректне значення відхилено
+t.target = 25
+println(t.target)    // 25</code></pre>
+
+<div class="warn">Початкове значення властивості записується <strong>напряму в поле</strong> й обходить власний setter. Тому <code>Thermostat().target</code> стартує з 20 без жодних перевірок. Якщо початкове значення приходить ззовні (з конструктора), перевіряйте його окремо, наприклад у <code>init</code>.</div>
+
+<div class="callout">Практичне правило: <strong>відкривайте мінімум</strong>. Властивість — <code>val</code>, якщо її не треба змінювати; <code>private set</code> — якщо змінює лише сам клас; повний <code>var</code> — лише коли зміни ззовні справді безпечні.</div>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Який запис дозволяє читати <code>balance</code> ззовні, але змінювати лише всередині класу?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>private var balance: Int</code></button>
+    <button class="quiz-option" data-choice="B"><code>var balance: Int</code> із рядком <code>private set</code> нижче</button>
+    <button class="quiz-option" data-choice="C"><code>val balance: Int</code> із рядком <code>get() = 0</code></button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: private set залишає читання відкритим, а запис дозволяє лише з методів класу." data-wrong="Ні: private var ховає й читання; а get() = 0 вже не зберігає значення. Потрібен private set."></p>
+</div>
+
+<h2>6. Практика</h2>
+
+<div class="callout">У класі <code>Rectangle</code> додайте обчислювану властивість <code>perimeter</code>. Створіть клас <code>Volume</code> (гучність) із властивістю <code>var level: Int = 50</code>, власний сеттер якої залишає значення в межах 0..100 (<code>if</code> підрізає надто велике до 100, надто мале до 0). Перевірте <code>level = 150</code> і <code>level = -5</code>.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-todo" data-slug="m05-l04-encapsulation">
+  <p class="playground-todo-label">🎮 Playground — TODO: створити share-посилання</p>
+  <pre><code>class Account(val owner: String, initial: Int) {
+    var balance: Int = initial
+        private set                    // читати можна всім, змінювати — лише всередині
+
+    val isEmpty: Boolean
+        get() = balance == 0           // обчислювана властивість без власного поля
+
+    fun deposit(amount: Int) {
+        require(amount &gt; 0) { "Сума має бути додатною" }
+        balance += amount
+    }
+
+    fun withdraw(amount: Int): Boolean {
+        if (amount &lt;= 0 || amount &gt; balance) return false
+        balance -= amount
+        return true
+    }
+}
+
+class Thermostat {
+    var target: Int = 20
+        set(value) {
+            if (value in 10..30) field = value   // field — приховане поле властивості
+        }
+}
+
+class Rectangle(val width: Int, val height: Int) {
+    val area: Int
+        get() = width * height
+    val isSquare: Boolean
+        get() = width == height
+}
+
+fun main() {
+    val acc = Account("Оля", 100)
+    acc.deposit(50)
+    println(acc.balance)               // 150
+    println(acc.withdraw(500))         // false
+    println(acc.withdraw(30))          // true
+    println(acc.balance)               // 120
+    println(acc.isEmpty)               // false
+    // acc.balance = 1_000_000         // розкоментуйте: помилка — сеттер private
+
+    val t = Thermostat()
+    t.target = 50
+    println(t.target)                  // 20 — значення поза 10..30 відхилено
+    t.target = 25
+    println(t.target)                  // 25
+
+    val r = Rectangle(3, 4)
+    println(r.area)                    // 12
+    println(r.isSquare)                // false
+}</code></pre>
+</div>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0001-klasy-ta-obyekty.html">«Класи та об’єкти — шпаргалка»</a> (уроки 1–4).</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0003-metody-this-tostring.html">← Попередній урок</a> · <a href="0005-posylannya-ta-rivnist.html">Наступний урок: Посилання та рівність об’єктів →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

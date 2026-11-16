@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Довідка: Успадкування, поліморфізм, data class — шпаргалка</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="../lessons/index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Класи» · Довідка</p>
+  <h1>Успадкування, поліморфізм, data class — шпаргалка</h1>
+  <p class="subtitle">Для уроків 7–9: успадкування, поліморфізм і data class; плюс перелік того, що відкладено.</p>
+</header>
+
+<h2>1. Успадкування</h2>
+
+<table>
+  <tr><th>Запис</th><th>Значення</th></tr>
+  <tr><td><code>open class Animal(val name: String)</code></td><td><a href="../../../glossary/index.html#inheritance">успадкувати</a> можна лише <code>open</code>-клас (за замовчуванням класи final)</td></tr>
+  <tr><td><code>class Dog(name: String) : Animal(name)</code></td><td>похідний клас викликає конструктор базового</td></tr>
+  <tr><td><code>open fun sound(): String</code></td><td>метод, який дозволено перевизначати</td></tr>
+  <tr><td><code>override fun sound() = "Гав"</code></td><td><a href="../../../glossary/index.html#override">перевизначення</a></td></tr>
+  <tr><td><code>super.toString()</code></td><td>версія методу з базового класу</td></tr>
+  <tr><td><code>Any</code></td><td>неявний предок усіх класів: <code>toString</code>, <code>equals</code>, <code>hashCode</code></td></tr>
+</table>
+
+<h2>2. Поліморфізм</h2>
+
+<table>
+  <tr><th>Запис</th><th>Значення</th></tr>
+  <tr><td><code>val pet: Animal = Dog("Бім")</code></td><td>змінна базового типу тримає нащадка; метод обирається за справжнім типом (<a href="../../../glossary/index.html#polymorphism">поліморфізм</a>)</td></tr>
+  <tr><td><code>fun f(list: List&lt;Animal&gt;)</code></td><td>працює з будь-якими нащадками</td></tr>
+  <tr><td><code>if (a is Dog) a.fetch()</code></td><td>перевірка типу + <a href="../../../glossary/index.html#smart-cast">smart cast</a></td></tr>
+  <tr><td><code>when (a) { is Dog -&gt; …; else -&gt; … }</code></td><td><code>is</code> у <code>when</code>; для відкритого класу <code>else</code> обов’язковий</td></tr>
+</table>
+
+<h2>3. data class</h2>
+
+<table>
+  <tr><th>Запис</th><th>Значення</th></tr>
+  <tr><td><code>data class P(val x: Int, val y: Int)</code></td><td><a href="../../../glossary/index.html#data-class">data class</a>: ≥ 1 параметр, усі <code>val</code>/<code>var</code></td></tr>
+  <tr><td><code>toString()</code></td><td><code>P(x=1, y=2)</code></td></tr>
+  <tr><td><code>==</code>, <code>hashCode()</code></td><td>за значеннями властивостей конструктора</td></tr>
+  <tr><td><code>p.copy(x = 10)</code></td><td>нова копія зі зміною</td></tr>
+  <tr><td><code>val (x, y) = p</code></td><td><a href="../../../glossary/index.html#destructuring">деструктуризація</a> (<code>component1()</code>, <code>component2()</code>)</td></tr>
+</table>
+
+<h2>4. Що навмисно відкладено</h2>
+
+<table>
+  <tr><th>Тема</th><th>Де</th></tr>
+  <tr><td>абстрактні класи, <code>abstract</code></td><td><a href="../../../glossary/index.html#abstract-class">модуль 7</a></td></tr>
+  <tr><td>інтерфейси</td><td><a href="../../../glossary/index.html#interface">модуль 7</a></td></tr>
+  <tr><td>enum-класи</td><td><a href="../../../glossary/index.html#enum-class">модуль 7</a></td></tr>
+  <tr><td>оголошення <code>object</code> (singleton), object expression</td><td><a href="../../../glossary/index.html#object">модуль 7</a></td></tr>
+  <tr><td>companion: деталі (ім’я, інтерфейси)</td><td><a href="../../../glossary/index.html#companion-details">модуль 7</a></td></tr>
+  <tr><td><code>protected</code>, <code>internal</code></td><td><a href="../../../glossary/index.html#visibility-modifiers">модуль 7</a></td></tr>
+  <tr><td>вкладені та внутрішні класи</td><td><a href="../../../glossary/index.html#nested-class">модуль 7</a></td></tr>
+  <tr><td>generics (<code>List&lt;T&gt;</code> у власних класах)</td><td><a href="../../../glossary/index.html#generics">модуль 9</a></td></tr>
+  <tr><td>sealed-ієрархії</td><td><a href="../../../glossary/index.html#sealed">модуль 9</a></td></tr>
+  <tr><td>винятки</td><td><a href="../../../glossary/index.html#exception">модуль 9</a></td></tr>
+  <tr><td>extension-функції та оператори</td><td><a href="../../../glossary/index.html#extension-function">модуль 8</a></td></tr>
+</table>
+
+<h2>5. Типові помилки</h2>
+
+<ul>
+  <li>забули <code>open</code> на класі чи методі — «This type is final» / «is final and cannot be overridden»;</li>
+  <li>забули <code>override</code> — компілятор не дозволить мовчки перекрити метод;</li>
+  <li>очікують, що <code>pet.fetch()</code> працює для змінної типу <code>Animal</code>;</li>
+  <li>кладуть у тіло <code>data class</code> властивості, що мають входити в <code>==</code> і <code>copy</code>.</li>
+</ul>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 8: Поліморфізм, is і smart cast</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Класи» · Урок 8 з 11 · ~8 хв</p>
+  <h1>Поліморфізм, is і smart cast</h1>
+  <p class="subtitle">Один тип змінної — різні справжні об’єкти. Перевірка типу через is.</p>
+</header>
+
+<h2>1. Змінна базового типу тримає нащадка</h2>
+
+<p>Оскільки собака — тварина, об’єкт <code>Dog</code> можна покласти в змінну типу <code>Animal</code>. Виклик методу виконається <strong>за справжнім типом об’єкта</strong>, а не за типом змінної — це <a href="../../../glossary/index.html#polymorphism">поліморфізм</a>:</p>
+
+<pre><code>val pet: Animal = Dog("Бім")
+println(pet.sound())      // Гав — версія з Dog</code></pre>
+
+<h2>2. Колекція різних об’єктів</h2>
+
+<p>Найкорисніше: працювати з різними об’єктами однаково. Функція не знає, які саме тварини в списку, і їй це не потрібно:</p>
+
+<pre><code>class Cow(name: String) : Animal(name) {
+    override fun sound() = "Му"
+}
+
+fun chorus(animals: List&lt;Animal&gt;) {
+    for (a in animals) {
+        println("${a.name}: ${a.sound()}")
+    }
+}
+
+val zoo: List&lt;Animal&gt; = listOf(Dog("Рекс"), Cat("Мурка"), Cow("Зорька"))
+chorus(zoo)
+// Рекс: Гав
+// Мурка: Няв
+// Зорька: Му</code></pre>
+
+<div class="callout"><code>List&lt;Animal&gt;</code> — «список тварин»; списки докладно вивчаються в модулі <a href="../../m06-collections/lessons/index.html">«Колекції»</a>, а запис <code>&lt;Animal&gt;</code> у кутових дужках (<a href="../../../glossary/index.html#generics">generics</a>) — ще пізніше. Поки читайте це як «список, де кожен елемент — <code>Animal</code> або його нащадок».</div>
+
+<p>Додайте новий клас <code>Bird</code> — і <code>chorus</code> працюватиме з ним <strong>без жодних змін</strong>. Це головна перевага: код залежить від базового типу, а не від списку конкретних нащадків.</p>
+
+<div class="quiz" data-answer="Няв">
+  <div class="q"><code>val pet: Animal = Cat("Мурка")</code>. Що поверне <code>pet.sound()</code>, якщо в <code>Cat</code> перевизначено <code>sound()</code> як "Няв"?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>3. Видно лише те, що є в типі змінної</h2>
+
+<pre><code>val pet: Animal = Dog("Бім")
+pet.fetch()     // помилка: в Animal немає методу fetch</code></pre>
+
+<p>Компілятор перевіряє <strong>тип змінної</strong>: <code>Animal</code> не гарантує наявності <code>fetch()</code>, адже у списку може бути й <code>Cat</code>. Якщо метод потрібен саме для <code>Dog</code>, треба спершу перевірити тип.</p>
+
+<h2>4. is і smart cast</h2>
+
+<p>Оператор <code>is</code> перевіряє справжній тип об’єкта. Усередині перевіреної гілки Kotlin сам «звужує» тип змінної — <a href="../../../glossary/index.html#smart-cast">smart cast</a> (приведення типу вручну не потрібне):</p>
+
+<pre><code>fun playWith(a: Animal): String {
+    if (a is Dog) {
+        return a.fetch()        // тут a вже сприймається як Dog
+    }
+    return "${a.name} не вміє приносити м’яч"
+}
+
+fun kind(a: Animal): String = when (a) {
+    is Dog -&gt; "собака"
+    is Cat -&gt; "кіт"
+    else -&gt; "інша тварина"
+}</code></pre>
+
+<p><code>is</code> також працює всередині <code>when</code> (пригадайте <a href="../../../glossary/index.html#when">when</a>). Для <code>when</code> над відкритим класом <code>else</code> обов’язкове — адже нащадків може бути скільки завгодно.</p>
+
+<div class="quiz" data-correct="B">
+  <p class="quiz-q">Що станеться при <code>val pet: Animal = Dog("Бім"); println(pet.fetch())</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">Виведе «Бім приносить м’яч»</button>
+    <button class="quiz-option" data-choice="B">Помилка компіляції: у типу Animal немає fetch</button>
+    <button class="quiz-option" data-choice="C">Поверне null</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: доступне лише те, що оголошено в типі змінної. Спершу перевірте pet is Dog." data-wrong="Ні: компілятор дивиться на тип змінної (Animal), а в ньому fetch() немає."></p>
+</div>
+
+<h2>5. Коли is, а коли поліморфізм</h2>
+
+<p>Перевірки <code>is</code> дозволяють дізнатися справжній тип, але якщо вони розповзаються по коду, кожен новий нащадок вимагатиме змінювати всі такі <code>when</code>. Надійніше робити так: загальну поведінку оголошувати <strong>методом базового класу</strong> та перевизначати в нащадках (як <code>sound()</code>), а <code>is</code> залишати для рідкісних випадків. Для замкненого переліку варіантів існують <a href="../../../glossary/index.html#enum-class">enum</a> і <a href="../../../glossary/index.html#sealed">sealed-ієрархії</a> — вони з’являться в пізніших модулях.</p>
+
+<h2>6. Практика</h2>
+
+<div class="callout">Додайте клас <code>Bird</code> зі звуком «Цвірінь» і перевірте, що <code>chorus</code> не потребує змін. Напишіть функцію <code>fun countDogs(animals: List&lt;Animal&gt;): Int</code>, що рахує собак через <code>is</code> (цикл + лічильник).</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-todo" data-slug="m05-l08-polymorphism">
+  <p class="playground-todo-label">🎮 Playground — TODO: створити share-посилання</p>
+  <pre><code>open class Animal(val name: String) {
+    open fun sound(): String = "..."
+}
+
+class Dog(name: String) : Animal(name) {
+    override fun sound() = "Гав"
+
+    fun fetch() = "$name приносить м’яч"
+}
+
+class Cat(name: String) : Animal(name) {
+    override fun sound() = "Няв"
+}
+
+class Cow(name: String) : Animal(name) {
+    override fun sound() = "Му"
+}
+
+fun chorus(animals: List&lt;Animal&gt;) {
+    for (a in animals) {
+        println("${a.name}: ${a.sound()}")    // версія sound() обирається за справжнім типом
+    }
+}
+
+fun playWith(a: Animal): String {
+    if (a is Dog) {
+        return a.fetch()                      // тут a автоматично «стає» Dog (smart cast)
+    }
+    return "${a.name} не вміє приносити м’яч"
+}
+
+fun kind(a: Animal): String = when (a) {
+    is Dog -&gt; "собака"
+    is Cat -&gt; "кіт"
+    else -&gt; "інша тварина"
+}
+
+fun main() {
+    val zoo: List&lt;Animal&gt; = listOf(Dog("Рекс"), Cat("Мурка"), Cow("Зорька"))
+    chorus(zoo)
+    // Рекс: Гав
+    // Мурка: Няв
+    // Зорька: Му
+
+    for (a in zoo) println(playWith(a))
+    // Рекс приносить м’яч
+    // Мурка не вміє приносити м’яч
+    // Зорька не вміє приносити м’яч
+
+    for (a in zoo) println(kind(a))           // собака, кіт, інша тварина
+
+    val pet: Animal = Dog("Бім")
+    println(pet.sound())                      // Гав
+    // println(pet.fetch())                   // розкоментуйте: помилка — у типу Animal немає fetch
+    if (pet is Dog) println(pet.fetch())      // Бім приносить м’яч
+}</code></pre>
+</div>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0003-uspadkuvannya-data-class.html">«Успадкування, поліморфізм, data class — шпаргалка»</a> (уроки 7–9).</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0007-uspadkuvannya.html">← Попередній урок</a> · <a href="0009-data-class.html">Наступний урок: data class →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

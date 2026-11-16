@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 3: Методи, this і toString</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Класи» · Урок 3 з 11 · ~8 хв</p>
+  <h1>Методи, this і toString</h1>
+  <p class="subtitle">Поведінка об’єкта: функції всередині класу, ключове слово this та текстове подання.</p>
+</header>
+
+<h2>1. Метод — функція всередині класу</h2>
+
+<p><a href="../../../glossary/index.html#method">Метод</a> — це функція, оголошена в тілі класу. Вона виконується <strong>для конкретного об’єкта</strong> і напряму бачить його властивості. Усе, що ви знаєте про функції (параметри, значення за замовчуванням, <code>return</code>, функції-вирази), працює й для методів.</p>
+
+<pre><code>class Counter {
+    var value = 0
+
+    fun increment() {
+        value++              // value — властивість «цього» об’єкта
+    }
+
+    fun add(n: Int) {
+        value += n
+    }
+}
+
+val c = Counter()
+c.increment()
+c.increment()
+c.add(5)
+println(c.value)    // 7</code></pre>
+
+<p>Метод викликають через крапку на об’єкті: <code>c.increment()</code>. Два різні лічильники мають різні <code>value</code>.</p>
+
+<h2>2. Методи, що повертають результат</h2>
+
+<pre><code>import kotlin.math.sqrt
+
+class Point(val x: Int, val y: Int) {
+    fun distanceTo(other: Point): Double {
+        val dx = (x - other.x).toDouble()
+        val dy = (y - other.y).toDouble()
+        return sqrt(dx * dx + dy * dy)
+    }
+
+    fun isOrigin(): Boolean = x == 0 &amp;&amp; y == 0
+
+    fun shifted(dx: Int, dy: Int): Point = Point(x + dx, y + dy)   // новий об’єкт
+}
+
+println(Point(0, 0).distanceTo(Point(3, 4)))   // 5.0</code></pre>
+
+<p>Усередині методу <code>x</code> і <code>y</code> — властивості «поточного» об’єкта, а <code>other.x</code> — іншого. Метод <code>shifted</code> нічого не змінює, а повертає <strong>новий</strong> об’єкт; такий стиль («незмінні» об’єкти з <code>val</code>) безпечніший, ми ще до нього повернемось.</p>
+
+<div class="quiz" data-answer="false">
+  <div class="q">Метод <code>isOrigin()</code> викликано на <code>Point(0, 5)</code>. Що він поверне? (true/false)</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>3. this</h2>
+
+<p>Усередині методу є прихований «параметр» — <a href="../../../glossary/index.html#this"><code>this</code></a>: посилання на об’єкт, для якого метод викликано. Зазвичай писати його не треба, але він потрібен, коли ім’я параметра збігається з іменем властивості:</p>
+
+<pre><code>class Cursor(var x: Int, var y: Int) {
+    fun moveTo(x: Int, y: Int) {
+        this.x = x          // властивість = параметр
+        this.y = y
+    }
+}</code></pre>
+
+<p>Без <code>this</code> запис <code>x = x</code> присвоїв би параметр самому собі — властивість не змінилась би.</p>
+
+<h2>4. toString: як об’єкт виглядає у println</h2>
+
+<p>Якщо вивести об’єкт «як є», Kotlin не знає, як його показати:</p>
+
+<pre><code>class Dot(val x: Int)
+println(Dot(1))      // Dot@1b6d3586 — ім’я класу й адреса в пам’яті (число щоразу інше)</code></pre>
+
+<p>Щоб <code>println</code> та рядкові шаблони показували щось осмислене, у класі оголошують спеціальний метод <a href="../../../glossary/index.html#tostring"><code>toString</code></a>:</p>
+
+<pre><code>class Point(val x: Int, val y: Int) {
+    override fun toString(): String = "($x, $y)"
+}
+
+val p = Point(3, 4)
+println(p)                  // (3, 4)
+println("Точка p = $p")     // Точка p = (3, 4)</code></pre>
+
+<div class="warn">Слово <code>override</code> перед <code>fun toString</code> поки що пишіть як <strong>обов’язковий шаблон</strong>: метод <code>toString</code> уже існує в кожного об’єкта, і ми його «перевизначаємо». Як це працює — в уроці <a href="0007-uspadkuvannya.html">«Успадкування»</a> (термін <a href="../../../glossary/index.html#override">override</a>).</div>
+
+<div class="quiz" data-correct="A">
+  <p class="quiz-q">Навіщо в методі <code>moveTo(x: Int, y: Int)</code> пишуть <code>this.x = x</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">Щоб відрізнити властивість об’єкта від параметра з тим самим іменем</button>
+    <button class="quiz-option" data-choice="B">Щоб метод став приватним</button>
+    <button class="quiz-option" data-choice="C">Щоб значення стало незмінним</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: this.x — властивість поточного об’єкта, x — параметр методу." data-wrong="Ні: this — це посилання на поточний об’єкт; воно дозволяє звернутися до властивості, коли ім’я «затінене» параметром."></p>
+</div>
+
+<h2>5. Практика</h2>
+
+<div class="callout">Додайте до класу <code>Point</code> метод <code>fun scaled(k: Int): Point</code> (множить обидві координати на <code>k</code>) і <code>override fun toString()</code>. Виведіть <code>Point(2, 3).scaled(10)</code>. Потім у класі <code>Counter</code> напишіть <code>fun reset()</code>, що скидає значення, і метод <code>fun isZero(): Boolean</code>.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-todo" data-slug="m05-l03-methods-this">
+  <p class="playground-todo-label">🎮 Playground — TODO: створити share-посилання</p>
+  <pre><code>import kotlin.math.sqrt
+
+class Counter {
+    var value = 0
+
+    fun increment() {
+        value++
+    }
+
+    fun add(n: Int) {
+        value += n
+    }
+
+    fun reset() {
+        value = 0
+    }
+}
+
+class Cursor(var x: Int, var y: Int) {
+    fun moveTo(x: Int, y: Int) {      // параметри «затіняють» властивості
+        this.x = x
+        this.y = y
+    }
+}
+
+class Dot(val x: Int)                 // без toString
+
+class Point(val x: Int, val y: Int) {
+    fun distanceTo(other: Point): Double {
+        val dx = (x - other.x).toDouble()
+        val dy = (y - other.y).toDouble()
+        return sqrt(dx * dx + dy * dy)
+    }
+
+    fun isOrigin(): Boolean = x == 0 &amp;&amp; y == 0
+
+    fun shifted(dx: Int, dy: Int): Point = Point(x + dx, y + dy)
+
+    override fun toString(): String = "($x, $y)"
+}
+
+fun main() {
+    val c = Counter()
+    c.increment()
+    c.increment()
+    c.add(5)
+    println(c.value)                  // 7
+    c.reset()
+    println(c.value)                  // 0
+
+    val cur = Cursor(1, 1)
+    cur.moveTo(5, 6)
+    println("${cur.x}, ${cur.y}")     // 5, 6
+
+    println(Dot(1))                   // Dot@… (адреса в пам’яті; щоразу різна)
+
+    val a = Point(0, 0)
+    val b = Point(3, 4)
+    println(a.distanceTo(b))          // 5.0
+    println(a.isOrigin())             // true
+    println(b)                        // (3, 4)
+    println(b.shifted(1, 1))          // (4, 5)
+    println("Точка b = $b")           // Точка b = (3, 4)
+}</code></pre>
+</div>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0001-klasy-ta-obyekty.html">«Класи та об’єкти — шпаргалка»</a> (уроки 1–4).</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0002-konstruktor-init.html">← Попередній урок</a> · <a href="0004-inkapsulyatsiya-vlastyvosti.html">Наступний урок: Інкапсуляція та властивості з логікою →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 6: Companion object: константи та фабрики</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Класи» · Урок 6 з 11 · ~7 хв</p>
+  <h1>Companion object: константи та фабрики</h1>
+  <p class="subtitle">Константи, фабричні методи та спільний лічильник — те, що належить класу загалом, а не окремому об’єкту.</p>
+</header>
+
+<h2>1. Що належить класу, а не об’єкту</h2>
+
+<p>Властивості й методи, які ми писали досі, «живуть» в кожному об’єкті окремо. Але іноді потрібне те, що спільне для всього класу:</p>
+<ul>
+  <li>константа (<code>MIN_DEPOSIT = 10</code>);</li>
+  <li>лічильник виданих номерів (<code>nextId</code>);</li>
+  <li>«іменований спосіб створення» (<code>Temperature.ofFahrenheit(212.0)</code>).</li>
+</ul>
+
+<p>У Kotlin для цього є <a href="../../../glossary/index.html#companion-object">companion object</a> — блок усередині класу, члени якого викликають через <strong>ім’я класу</strong>, без створення об’єкта (у Java це роль <code>static</code>).</p>
+
+<pre><code>class Account(val id: Int, val owner: String) {
+    companion object {
+        const val MIN_DEPOSIT = 10
+    }
+}
+
+println(Account.MIN_DEPOSIT)    // 10</code></pre>
+
+<ul>
+  <li>У класі може бути <strong>лише один</strong> <code>companion object</code>.</li>
+  <li><code>const val</code> — константа, значення якої відоме на етапі компіляції (числа, <code>Boolean</code>, <code>String</code>). Те саме <code>const val SIZE = 4</code>, яке ви писали в «П’ятнашках» на рівні файлу.</li>
+  <li>Усередині класу до членів companion звертаються просто за іменем: <code>if (amount &lt; MIN_DEPOSIT)</code>.</li>
+</ul>
+
+<div class="quiz" data-answer="1|один|одного">
+  <div class="q">Скільки блоків <code>companion object</code> може бути в одному класі? (число)</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>2. Фабричні методи</h2>
+
+<p>Конструктор завжди має ім’я класу й не може пояснити, <em>що саме</em> ми передаємо. Порівняйте: <code>Temperature(212.0)</code> — це градуси Цельсія чи Фаренгейта? Рішення: сховати конструктор (<code>private constructor</code>) і створювати об’єкти фабричними методами з companion:</p>
+
+<pre><code>class Temperature private constructor(val celsius: Double) {
+    companion object {
+        fun ofCelsius(c: Double): Temperature = Temperature(c)
+        fun ofFahrenheit(f: Double): Temperature = Temperature((f - 32) * 5 / 9)
+    }
+
+    override fun toString(): String = "%.1f °C".format(celsius)
+}
+
+println(Temperature.ofFahrenheit(212.0))   // 100.0 °C
+// Temperature(5.0)                         // помилка: конструктор private</code></pre>
+
+<p>Companion — частина класу, тому йому <strong>дозволено</strong> викликати приватний конструктор. Ззовні об’єкт можна створити тільки через фабрики.</p>
+
+<p>Дрібниця: <code>"%.1f".format(…)</code> залежить від локалі системи — у Playground буде <code>100.0</code>, а на комп’ютері з українською локаллю — <code>100,0</code>.</p>
+
+<h2>3. Спільний лічильник</h2>
+
+<p>Властивість у companion існує в єдиному екземплярі на весь клас — ідеально для генерації унікальних номерів:</p>
+
+<pre><code>class Account private constructor(val id: Int, val owner: String) {
+    companion object {
+        private var nextId = 1                 // спільний для всіх рахунків
+
+        fun open(owner: String): Account {
+            val account = Account(nextId, owner)
+            nextId++
+            return account
+        }
+    }
+}
+
+val a = Account.open("Оля")      // id = 1
+val b = Account.open("Іван")     // id = 2</code></pre>
+
+<p>Кожен об’єкт має власне <code>owner</code>, але <code>nextId</code> — один на всіх.</p>
+
+<div class="callout"><strong>Це лише мінімум.</strong> Companion може мати ім’я, реалізовувати інтерфейси й багато іншого — див. <a href="../../../glossary/index.html#companion-details">companion: деталі</a>. Окремі «одноосібні» об’єкти без класу-власника — <a href="../../../glossary/index.html#object">оголошення object</a>; усе це — модуль 7.</div>
+
+<div class="quiz" data-correct="A">
+  <p class="quiz-q">Як правильно викликати фабричний метод <code>open</code> з companion класу <code>Account</code> ззовні?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>Account.open("Оля")</code></button>
+    <button class="quiz-option" data-choice="B"><code>Account().open("Оля")</code></button>
+    <button class="quiz-option" data-choice="C"><code>companion.open("Оля")</code></button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: члени companion викликають через ім’я класу." data-wrong="Ні: створювати об’єкт для виклику не треба (до того ж конструктор private); пишіть Account.open(...)."></p>
+</div>
+
+<h2>4. Практика</h2>
+
+<div class="callout">Створіть клас <code>Student</code> із <code>private constructor(val name: String, val id: Int)</code> та фабрикою <code>Student.enroll(name)</code>, що видає зростаючі <code>id</code>, починаючи з 1000. Додайте <code>const val MAX_NAME = 20</code> і обрізайте імена довші за 20 символів методом <code>name.take(MAX_NAME)</code>.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-todo" data-slug="m05-l06-companion">
+  <p class="playground-todo-label">🎮 Playground — TODO: створити share-посилання</p>
+  <pre><code>class Account private constructor(val id: Int, val owner: String) {
+    var balance: Int = 0
+        private set
+
+    fun deposit(amount: Int): Boolean {
+        if (amount &lt; MIN_DEPOSIT) return false
+        balance += amount
+        return true
+    }
+
+    companion object {
+        const val MIN_DEPOSIT = 10
+        private var nextId = 1         // один на весь клас, а не на кожен об’єкт
+
+        fun open(owner: String): Account {
+            val account = Account(nextId, owner)
+            nextId++
+            return account
+        }
+    }
+}
+
+class Temperature private constructor(val celsius: Double) {
+    companion object {
+        fun ofCelsius(c: Double): Temperature = Temperature(c)
+        fun ofFahrenheit(f: Double): Temperature = Temperature((f - 32) * 5 / 9)
+    }
+
+    override fun toString(): String = "%.1f °C".format(celsius)
+}
+
+fun main() {
+    val a = Account.open("Оля")
+    val b = Account.open("Іван")
+    println("${a.id} ${a.owner}")      // 1 Оля
+    println("${b.id} ${b.owner}")      // 2 Іван
+
+    println(a.deposit(5))              // false
+    println(a.deposit(50))             // true
+    println(a.balance)                 // 50
+    println(Account.MIN_DEPOSIT)       // 10
+    // val c = Account(3, "Хтось")     // розкоментуйте: конструктор private
+
+    println(Temperature.ofFahrenheit(212.0))   // 100.0 °C
+    println(Temperature.ofCelsius(36.6))       // 36.6 °C
+}</code></pre>
+</div>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0002-posylannya-companion-fn-refs.html">«Посилання, companion, посилання на функції — шпаргалка»</a> (уроки 5, 6, 10, 11).</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0005-posylannya-ta-rivnist.html">← Попередній урок</a> · <a href="0007-uspadkuvannya.html">Наступний урок: Успадкування: open, override, super →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

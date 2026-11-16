@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 9: data class</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Класи» · Урок 9 з 11 · ~9 хв</p>
+  <h1>data class</h1>
+  <p class="subtitle">Клас-контейнер для даних: toString, ==, copy і деструктуризація — безкоштовно.</p>
+</header>
+
+<h2>1. Проблема: «голий» клас-контейнер</h2>
+
+<p>Багато класів існують лише щоб зберігати кілька значень разом: точка, покупка, студент. Для звичайного класу ми щоразу самі писали <code>toString</code>, а <code>==</code> порівнювало б посилання (урок <a href="0005-posylannya-ta-rivnist.html">5</a>). Для таких класів Kotlin пропонує <a href="../../../glossary/index.html#data-class">data class</a>:</p>
+
+<pre><code>class PlainPoint(val x: Int, val y: Int)
+data class Point(val x: Int, val y: Int)
+
+println(PlainPoint(1, 2) == PlainPoint(1, 2))   // false
+println(Point(1, 2) == Point(1, 2))             // true
+println(PlainPoint(1, 2))                       // PlainPoint@6d06d69c
+println(Point(1, 2))                            // Point(x=1, y=2)</code></pre>
+
+<p>Достатньо додати слово <code>data</code> перед <code>class</code> — і компілятор сам створює корисні методи за <strong>властивостями первинного конструктора</strong>. Саме такі класи (<code>data class Purchase(...)</code>) ви зустрінете в модулі «Колекції».</p>
+
+<h2>2. Що генерується</h2>
+
+<table>
+  <tr><th>Метод</th><th>Що робить</th></tr>
+  <tr><td><code>toString()</code></td><td>красивий текст: <code>Point(x=1, y=2)</code></td></tr>
+  <tr><td><code>equals()</code> / <code>hashCode()</code></td><td><code>==</code> порівнює <strong>значення</strong> властивостей; <code>hashCode</code> — «числовий відбиток» значень, потрібний множинам і словникам (<a href="../../m06-collections/lessons/index.html">Колекції</a>)</td></tr>
+  <tr><td><code>copy(...)</code></td><td>нова копія із зміною лише вказаних властивостей</td></tr>
+  <tr><td><code>component1()</code>, <code>component2()</code>, …</td><td>основа для деструктуризації</td></tr>
+</table>
+
+<p>Вимоги: у первинному конструкторі має бути хоча б один параметр, і кожен із них — <code>val</code> або <code>var</code>. Рекомендація: робіть їх <code>val</code> — тоді об’єкт незмінний, і його безпечно передавати будь-куди.</p>
+
+<div class="quiz" data-answer="Point(x=1, y=5)">
+  <div class="q"><code>val p = Point(1, 2); val q = p.copy(y = 5)</code>. Що виведе <code>println(q)</code>?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>3. copy: «змінити» незмінний об’єкт</h2>
+
+<p>Якщо властивості <code>val</code>, змінити їх не можна. Замість цього створюють <strong>нову копію</strong> з потрібними змінами — оригінал лишається цілим:</p>
+
+<pre><code>val p = Point(1, 2)
+val moved = p.copy(x = 10)
+println(moved)     // Point(x=10, y=2)
+println(p)         // Point(x=1, y=2) — не змінився</code></pre>
+
+<h2>4. Деструктуризація</h2>
+
+<p>Об’єкт data class можна розкласти на змінні за порядком властивостей у конструкторі — <a href="../../../glossary/index.html#destructuring">деструктуризація</a>, яку ви бачили з <code>withIndex()</code>:</p>
+
+<pre><code>val (x, y) = Point(1, 2)
+println("$x, $y")      // 1, 2</code></pre>
+
+<p>Це працює завдяки згенерованим <code>component1()</code>, <code>component2()</code>. Порядок важливий: перша змінна отримує першу властивість конструктора.</p>
+
+<h2>5. Тільки властивості конструктора</h2>
+
+<p>Усі згенеровані методи враховують <strong>лише властивості первинного конструктора</strong>. Властивості, оголошені в тілі класу, ігноруються:</p>
+
+<pre><code>data class User(val name: String, val age: Int) {
+    var note: String = ""        // у тілі — не бере участі
+}
+
+val u1 = User("Оля", 20); u1.note = "A"
+val u2 = User("Оля", 20); u2.note = "B"
+println(u1 == u2)                // true — note не порівнюється
+println(u1)                      // User(name=Оля, age=20)
+println(u1.copy().note)          // "" — note у копію не потрапляє</code></pre>
+
+<div class="warn">Не кладіть у тіло data-класу властивості, від яких залежить «ідентичність» об’єкта: порівняння та копіювання їх проігнорують.</div>
+
+<div class="quiz" data-correct="A">
+  <p class="quiz-q"><code>User("Оля", 20)</code> із <code>note = "A"</code> і <code>User("Оля", 20)</code> із <code>note = "B"</code> — що дасть <code>==</code>? (<code>note</code> оголошено в тілі класу)</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A"><code>true</code> — <code>note</code> не входить у конструктор і не порівнюється</button>
+    <button class="quiz-option" data-choice="B"><code>false</code> — <code>note</code> різні</button>
+    <button class="quiz-option" data-choice="C">Помилка компіляції</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: equals/hashCode/toString/copy беруть лише властивості первинного конструктора." data-wrong="Ні: у згенерованому equals беруть участь тільки name та age."></p>
+</div>
+
+<h2>6. Практика</h2>
+
+<div class="callout">Опишіть <code>data class Purchase(val item: String, val price: Int, val category: String)</code>. Створіть два однакових за змістом об’єкти й переконайтеся, що вони <code>==</code>. Зробіть копію з іншою ціною через <code>copy(price = …)</code>, а потім розкладіть її на три змінні та виведіть.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-todo" data-slug="m05-l09-data-class">
+  <p class="playground-todo-label">🎮 Playground — TODO: створити share-посилання</p>
+  <pre><code>class PlainPoint(val x: Int, val y: Int)
+
+data class Point(val x: Int, val y: Int)
+
+data class Purchase(val item: String, val price: Int, val category: String)
+
+data class User(val name: String, val age: Int) {
+    var note: String = ""              // не входить у конструктор — ігнорується згенерованими методами
+}
+
+fun main() {
+    val a = PlainPoint(1, 2)
+    val b = PlainPoint(1, 2)
+    println(a == b)                    // false
+    println(a)                         // PlainPoint@… (адреса)
+
+    val p = Point(1, 2)
+    val q = Point(1, 2)
+    println(p == q)                    // true — порівнюються значення властивостей
+    println(p)                         // Point(x=1, y=2)
+    println(p.hashCode() == q.hashCode())   // true
+
+    val moved = p.copy(x = 10)         // нова копія з однією зміною
+    println(moved)                     // Point(x=10, y=2)
+    println(p)                         // Point(x=1, y=2) — оригінал не змінився
+
+    val (x, y) = p                     // деструктуризація
+    println("$x, $y")                  // 1, 2
+
+    val purchase = Purchase("Хліб", 30, "їжа")
+    println(purchase)                  // Purchase(item=Хліб, price=30, category=їжа)
+
+    val u1 = User("Оля", 20)
+    u1.note = "A"
+    val u2 = User("Оля", 20)
+    u2.note = "B"
+    println(u1 == u2)                  // true — note не враховується
+    println(u1)                        // User(name=Оля, age=20)
+    println(u1.copy().note.isEmpty())  // true — note у копію не потрапляє
+}</code></pre>
+</div>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0003-uspadkuvannya-data-class.html">«Успадкування, поліморфізм, data class — шпаргалка»</a> (уроки 7–9).</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0008-polimorfizm.html">← Попередній урок</a> · <a href="0010-posylannya-na-konstruktory-metody.html">Наступний урок: Посилання на конструктори та методи →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

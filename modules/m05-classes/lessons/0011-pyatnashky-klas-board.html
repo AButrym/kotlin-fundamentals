@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 11: Підсумок: «П’ятнашки» як клас</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Класи» · Урок 11 з 11 · ~10 хв</p>
+  <h1>Підсумок: «П’ятнашки» як клас</h1>
+  <p class="subtitle">Збираємо все разом: гра «П’ятнашки» тепер є класом із фабриками, методами та приватним станом.</p>
+</header>
+
+<h2>1. Постановка</h2>
+
+<p>У модулі «Цикли та масиви» ми будували поле «П’ятнашок» функціями над масивом. Тепер оформимо його <strong>класом <code>Board</code></strong>: стан (поле) прихований, ззовні лише безпечні операції.</p>
+
+<ul>
+  <li><code>Board.solved()</code> — розв’язане поле;</li>
+  <li><code>Board.scrambled(moves)</code> — випадкове, але <strong>завжди розв’язуване</strong>;</li>
+  <li><code>isSolved</code> — чи плитки стоять по порядку;</li>
+  <li><code>move(row, col)</code> — зсунути плитку в порожню клітинку, якщо вона сусідня;</li>
+  <li><code>toString()</code> — гарний друк поля.</li>
+</ul>
+
+<p>Для зберігання поля використаємо <code>Matrix</code> із <a href="../../m03-arrays-loops/lessons/0011-operator-indeksatsii.html">уроку 11 модуля 3</a> — без жодних змін (<code>cells[r, c]</code>).</p>
+
+<h2>2. Каркас класу</h2>
+
+<pre><code>class Board private constructor(private val cells: Matrix) {
+
+    companion object {
+        const val SIZE = 4
+        const val BLANK = 16
+        private val DR = intArrayOf(-1, 1, 0, 0)    // зсуви по рядку: вгору, вниз, …
+        private val DC = intArrayOf(0, 0, -1, 1)    // зсуви по стовпцю: …, ліворуч, праворуч
+
+        fun solved(): Board {
+            val m = Matrix(SIZE, SIZE)
+            for (i in 0 until SIZE * SIZE) {
+                m[i / SIZE, i % SIZE] = i + 1
+            }
+            return Board(m)
+        }
+        // scrambled(...) — нижче
+    }
+    // властивості й методи — нижче
+}</code></pre>
+
+<ul>
+  <li><code>private constructor</code> + фабрики в companion (урок <a href="0006-companion-object.html">6</a>): поле можна створити лише розв’язаним або перемішаним законним шляхом.</li>
+  <li><code>cells</code> — <code>private</code>: ззовні матрицю не зіпсувати (урок <a href="0004-inkapsulyatsiya-vlastyvosti.html">4</a>).</li>
+</ul>
+
+<h2>3. Властивість, метод, toString</h2>
+
+<pre><code>    val isSolved: Boolean            // обчислювана властивість (урок 4)
+        get() {
+            for (i in 0 until SIZE * SIZE) {
+                if (cells[i / SIZE, i % SIZE] != i + 1) return false
+            }
+            return true
+        }
+
+    fun move(row: Int, col: Int): Boolean {      // метод (урок 3)
+        for (d in 0 until 4) {
+            val r = row + DR[d]
+            val c = col + DC[d]
+            if (r in 0 until SIZE &amp;&amp; c in 0 until SIZE &amp;&amp; cells[r, c] == BLANK) {
+                cells[r, c] = cells[row, col]
+                cells[row, col] = BLANK
+                return true
+            }
+        }
+        return false
+    }
+
+    override fun toString(): String {            // урок 3 і 7
+        val sb = StringBuilder()
+        for (r in 0 until SIZE) {
+            for (c in 0 until SIZE) {
+                val v = cells[r, c]
+                val text = if (v == BLANK) "·" else v.toString()
+                sb.append(text.padStart(3))
+            }
+            sb.append('\n')
+        }
+        return sb.toString()
+    }</code></pre>
+
+<p><code>move</code> перевіряє чотирьох сусідів плитки: якщо один із них — порожня клітинка, міняє їх місцями й повертає <code>true</code>; якщо ні — поле не змінюється і результат <code>false</code>. <code>StringBuilder</code> — готовий клас стандартної бібліотеки для побудови тексту частинами.</p>
+
+<div class="quiz" data-answer="false">
+  <div class="q">Що поверне <code>Board.solved().move(0, 0)</code>? (true/false)</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>4. Чому scrambled завжди розв’язуване</h2>
+
+<p>У модулі 3 ми перемішували плитки й перевіряли парність інверсій. Тут інший підхід: стартуємо з розв’язаного поля й робимо <strong>лише законні ходи</strong> — кожен хід зберігає розв’язуваність (це і є інваріант з уроку про інверсії), тож нерозв’язного поля вийти не може:</p>
+
+<pre><code>        fun scrambled(moves: Int): Board {       // у companion object
+            val board = solved()
+            var blankRow = SIZE - 1
+            var blankCol = SIZE - 1
+            repeat(moves) {
+                val d = Random.nextInt(4)
+                val r = blankRow + DR[d]
+                val c = blankCol + DC[d]
+                if (r in 0 until SIZE &amp;&amp; c in 0 until SIZE) {
+                    board.move(r, c)             // плитка (r, c) їде в порожню клітинку
+                    blankRow = r
+                    blankCol = c
+                }
+            }
+            return board
+        }</code></pre>
+
+<p>Потрібен <code>import kotlin.random.Random</code> на початку файла. Змінні <code>blankRow</code>/<code>blankCol</code> — позиція порожньої клітинки: після зсуву плитки вона переходить туди, де плитка стояла.</p>
+
+<div class="quiz" data-correct="A">
+  <p class="quiz-q">Чому <code>Board.scrambled(...)</code> не може дати нерозв’язне поле?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">Бо стартує з розв’язаного поля й виконує лише законні ходи</button>
+    <button class="quiz-option" data-choice="B">Бо викликає shuffle() для масиву</button>
+    <button class="quiz-option" data-choice="C">Бо Random надійний</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: законні ходи не змінюють розв’язуваність." data-wrong="Ні: тут немає shuffle й випадкової перестановки плиток — лише послідовність законних ходів."></p>
+</div>
+
+<h2>5. Усе разом</h2>
+
+<pre><code>fun main() {
+    val board = Board.solved()
+    print(board)
+    println(board.isSolved)        // true
+    println(board.move(0, 0))      // false
+    println(board.move(3, 2))      // true — плитка 15 їде вправо
+    println(board.isSolved)        // false
+    print(Board.scrambled(50))     // випадкове, але розв’язуване
+}</code></pre>
+
+<table>
+  <tr><th>Що ми використали</th><th>Тема</th><th>Урок</th></tr>
+  <tr><td><code>private constructor</code>, фабрики <code>solved()</code> / <code>scrambled()</code></td><td>конструктори, companion</td><td>2, 6</td></tr>
+  <tr><td><code>private val cells</code></td><td>інкапсуляція</td><td>4</td></tr>
+  <tr><td><code>isSolved</code> з <code>get()</code></td><td>обчислювана властивість</td><td>4</td></tr>
+  <tr><td><code>move(...)</code>, <code>toString()</code></td><td>методи, override</td><td>3, 7</td></tr>
+  <tr><td><code>cells[r, c]</code></td><td>клас <code>Matrix</code> з модуля 3 (<code>operator get/set</code>)</td><td>—</td></tr>
+</table>
+
+<h2>6. Практика</h2>
+
+<div class="callout">Додайте <code>var moves: Int = 0</code> із <code>private set</code> — лічильник успішних ходів (збільшуйте в <code>move</code>, коли повертаєте <code>true</code>). Потім у <code>main</code> зіграйте кілька ходів вручну (<code>move(3, 2)</code>, <code>move(3, 1)</code>, …) і виведіть кількість ходів та <code>isSolved</code>.</div>
+
+<div class="callout"><strong>Вітаємо!</strong> Ви пройшли основи класів. Попереду — <a href="../../m06-collections/lessons/index.html">модуль «Колекції»</a>, де <code>List</code>, <code>Set</code> і <code>Map</code> працюватимуть із вашими класами та data class.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-todo" data-slug="m05-l11-fifteen-board">
+  <p class="playground-todo-label">🎮 Playground — TODO: створити share-посилання</p>
+  <pre><code>import kotlin.random.Random
+
+// Matrix — без змін із модуля «Цикли та масиви» (урок 11)
+class Matrix(val rows: Int, val cols: Int) {
+    private val data = IntArray(rows * cols)
+
+    private fun checkBounds(row: Int, col: Int) {
+        require(row in 0 until rows &amp;&amp; col in 0 until cols) {
+            "($row, $col) поза межами матриці ${rows}x$cols"
+        }
+    }
+
+    operator fun get(row: Int, col: Int): Int {
+        checkBounds(row, col)
+        return data[row * cols + col]
+    }
+
+    operator fun set(row: Int, col: Int, value: Int) {
+        checkBounds(row, col)
+        data[row * cols + col] = value
+    }
+}
+
+class Board private constructor(private val cells: Matrix) {
+
+    companion object {
+        const val SIZE = 4
+        const val BLANK = 16
+        private val DR = intArrayOf(-1, 1, 0, 0)    // зсуви по рядку для 4 напрямів
+        private val DC = intArrayOf(0, 0, -1, 1)    // зсуви по стовпцю
+
+        fun solved(): Board {
+            val m = Matrix(SIZE, SIZE)
+            for (i in 0 until SIZE * SIZE) {
+                m[i / SIZE, i % SIZE] = i + 1
+            }
+            return Board(m)
+        }
+
+        // Випадкові ЛЕГАЛЬНІ ходи з розв’язаного поля → поле гарантовано розв’язуване
+        fun scrambled(moves: Int): Board {
+            val board = solved()
+            var blankRow = SIZE - 1
+            var blankCol = SIZE - 1
+            repeat(moves) {
+                val d = Random.nextInt(4)
+                val r = blankRow + DR[d]
+                val c = blankCol + DC[d]
+                if (r in 0 until SIZE &amp;&amp; c in 0 until SIZE) {
+                    board.move(r, c)          // плитка (r, c) їде в порожню клітинку
+                    blankRow = r
+                    blankCol = c
+                }
+            }
+            return board
+        }
+    }
+
+    fun tile(row: Int, col: Int): Int = cells[row, col]
+
+    val isSolved: Boolean
+        get() {
+            for (i in 0 until SIZE * SIZE) {
+                if (cells[i / SIZE, i % SIZE] != i + 1) return false
+            }
+            return true
+        }
+
+    // Пересуває плитку (row, col) у порожню клітинку, якщо вони сусідні
+    fun move(row: Int, col: Int): Boolean {
+        for (d in 0 until 4) {
+            val r = row + DR[d]
+            val c = col + DC[d]
+            if (r in 0 until SIZE &amp;&amp; c in 0 until SIZE &amp;&amp; cells[r, c] == BLANK) {
+                cells[r, c] = cells[row, col]
+                cells[row, col] = BLANK
+                return true
+            }
+        }
+        return false
+    }
+
+    override fun toString(): String {
+        val sb = StringBuilder()
+        for (r in 0 until SIZE) {
+            for (c in 0 until SIZE) {
+                val v = cells[r, c]
+                val text = if (v == BLANK) "·" else v.toString()
+                sb.append(text.padStart(3))
+            }
+            sb.append('\n')
+        }
+        return sb.toString()
+    }
+}
+
+fun main() {
+    val board = Board.solved()
+    print(board)
+    println(board.isSolved)        // true
+    println(board.move(0, 0))      // false — плитка 1 не сусідить із порожньою
+    println(board.move(3, 2))      // true  — плитка 15 їде вправо
+    println(board.isSolved)        // false
+    println(board.tile(3, 3))      // 15
+    print(board)
+
+    println("--- Перемішане поле ---")
+    print(Board.scrambled(50))     // випадкове, але розв’язуване
+}</code></pre>
+</div>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0002-posylannya-companion-fn-refs.html">«Посилання, companion, посилання на функції — шпаргалка»</a> (уроки 5, 6, 10, 11).</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0010-posylannya-na-konstruktory-metody.html">← Попередній урок</a> · <a href="../../m06-collections/lessons/index.html">Наступний модуль: Колекції →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Урок 7: Успадкування: open, override, super</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+<a class="index-link" href="index.html">← Усі уроки</a>
+
+<header class="lesson-header">
+  <p class="eyebrow">Kotlin Fundamentals · Модуль «Класи» · Урок 7 з 11 · ~9 хв</p>
+  <h1>Успадкування: open, override, super</h1>
+  <p class="subtitle">Як один клас розширює інший: open, наслідування конструктора, override і super.</p>
+</header>
+
+<h2>1. Навіщо успадкування</h2>
+
+<p>Собака й кіт — різні типи, але обидва — тварини: мають ім’я й видають звуки. Копіювати спільне в обидва класи — це дублювання. <a href="../../../glossary/index.html#inheritance">Успадкування</a> (inheritance) дозволяє описати спільне в <strong>базовому класі</strong>, а в <strong>похідних</strong> додати лише відмінності. Критерій: похідний клас — <em>різновид</em> базового («собака — це тварина»).</p>
+
+<h2>2. open і наслідування конструктора</h2>
+
+<p>Класи в Kotlin за замовчуванням <strong>закриті</strong> (<code>final</code>): успадкувати їх не можна. Щоб дозволити, базовий клас позначають <code>open</code>. Похідний клас після двокрапки викликає конструктор базового:</p>
+
+<pre><code>open class Animal(val name: String) {
+    open fun sound(): String = "..."
+
+    fun describe(): String = "$name каже ${sound()}"
+}
+
+class Dog(name: String) : Animal(name) {
+    override fun sound(): String = "Гав"
+
+    fun fetch(): String = "$name приносить м’яч"
+}
+
+val d = Dog("Рекс")
+println(d.describe())     // Рекс каже Гав
+println(d.fetch())        // Рекс приносить м’яч</code></pre>
+
+<ul>
+  <li><code>class Dog(name: String) : Animal(name)</code> — <code>Dog</code> приймає <code>name</code> і передає його конструктору <code>Animal</code>. Властивість <code>name</code> оголошена один раз — у базовому класі.</li>
+  <li><code>Dog</code> отримує з <code>Animal</code> <strong>усе, крім <code>private</code></strong>: властивість <code>name</code>, метод <code>describe()</code> (він не <code>open</code>, але успадковується; просто його не можна перевизначити).</li>
+</ul>
+
+<h2>3. override: змінити поведінку</h2>
+
+<p>Метод базового класу можна перевизначити лише якщо він позначений <code>open</code>, і в похідному класі ставлять <code>override</code>:</p>
+
+<ul>
+  <li><code>open fun sound()</code> — «дозволено перевизначати»;</li>
+  <li><code>override fun sound()</code> — «перевизначаю»;</li>
+  <li>метод без <code>open</code> (як <code>describe</code>) перевизначити не можна — він <em>final</em>.</li>
+</ul>
+
+<p>Зверніть увагу: <code>describe()</code> (у базовому класі) викликає <code>sound()</code> — і для <code>Dog</code> виконується версія <code>Dog.sound()</code>. Базовий код «не знає», чий саме метод запуститься; це основа поліморфізму (наступний урок).</p>
+
+<div class="quiz" data-answer="Dog|Dog.sound()">
+  <div class="q">Яка версія <code>sound()</code> виконається в <code>Dog("Рекс").describe()</code>: з <code>Animal</code> чи з <code>Dog</code>?</div>
+  <input type="text" placeholder="відповідь">
+  <button>Перевірити</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>4. super і спільний предок Any</h2>
+
+<p>Усередині перевизначеного методу можна викликати версію базового класу через <code>super</code>:</p>
+
+<pre><code>class Cat(name: String) : Animal(name) {
+    override fun sound(): String = "Няв"
+    override fun toString(): String = "Cat($name) → " + super.toString()
+}</code></pre>
+
+<p>А звідки взявся <code>super.toString()</code>, якщо в <code>Animal</code> ми його не писали? Усі класи Kotlin неявно успадковують спільний корінь <code>Any</code>, у якому вже є <code>toString()</code>, <code>equals()</code> і <code>hashCode()</code>. Тож <code>override fun toString()</code> з уроку <a href="0003-metody-this-tostring.html">3</a> — це саме перевизначення методу з <code>Any</code>. Тепер ясно, чому <code>println(Dot(1))</code> друкував <code>Dot@…</code>: це версія з <code>Any</code>.</p>
+
+<div class="warn">Якщо в об’єкта «раптом» є метод, якого ви не писали, — шукайте його в базовому класі, зокрема в <code>Any</code>.</div>
+
+<div class="quiz" data-correct="A">
+  <p class="quiz-q">Що станеться, якщо спробувати успадкувати клас, не позначений <code>open</code>?</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-choice="A">Помилка компіляції: клас за замовчуванням final</button>
+    <button class="quiz-option" data-choice="B">Працюватиме, <code>open</code> — лише рекомендація</button>
+    <button class="quiz-option" data-choice="C">Помилка з’явиться лише під час виконання</button>
+  </div>
+  <p class="quiz-feedback" data-right="Так: у Kotlin класи закриті, поки явно не позначені open." data-wrong="Ні: компілятор не дозволить успадкувати final-клас — це перевіряється ще до запуску."></p>
+</div>
+
+<h2>5. Що відкладаємо</h2>
+
+<p>У нашому <code>Animal</code> метод <code>sound()</code> повертає безглузде <code>"..."</code> — тварини «взагалі» не існує, є лише конкретні види. Щоб заборонити створювати «абстрактну» тварину й змусити нащадків реалізувати <code>sound()</code>, використовують <a href="../../../glossary/index.html#abstract-class">абстрактні класи</a>; а <a href="../../../glossary/index.html#interface">інтерфейси</a> описують лише «можливості» без стану. Видимість <code>protected</code> (доступ лише для нащадків) — <a href="../../../glossary/index.html#visibility-modifiers">тут</a>. Усе це — у модулі 7; нам потрібне лише базове наслідування.</p>
+
+<h2>6. Практика</h2>
+
+<div class="callout">Додайте до ієрархії клас <code>Cow</code> (звук «Му»). Створіть <code>open class Vehicle(val brand: String)</code> з <code>open fun wheels(): Int = 4</code> і похідні <code>Bike</code> (2 колеса) та <code>Truck</code> (6 коліс). Напишіть метод <code>describe()</code> у <code>Vehicle</code>, що друкує марку та кількість коліс.</div>
+
+<h2>🎮 Спробуйте в браузері</h2>
+
+<div class="playground-todo" data-slug="m05-l07-inheritance">
+  <p class="playground-todo-label">🎮 Playground — TODO: створити share-посилання</p>
+  <pre><code>open class Animal(val name: String) {
+    open fun sound(): String = "..."
+
+    fun describe(): String = "$name каже ${sound()}"
+
+    override fun toString(): String = "Animal($name)"
+}
+
+class Dog(name: String) : Animal(name) {
+    override fun sound(): String = "Гав"
+
+    fun fetch(): String = "$name приносить м’яч"
+}
+
+class Cat(name: String) : Animal(name) {
+    override fun sound(): String = "Няв"
+
+    override fun toString(): String = "Cat($name) → " + super.toString()
+}
+
+// class Puppy : Dog("Бім")           // розкоментуйте: Dog не open, успадковувати заборонено
+
+fun main() {
+    val d = Dog("Рекс")
+    val c = Cat("Мурка")
+    val generic = Animal("Тварина")
+
+    println(d.describe())              // Рекс каже Гав
+    println(c.describe())              // Мурка каже Няв
+    println(generic.describe())        // Тварина каже ...
+    println(d.fetch())                 // Рекс приносить м’яч
+
+    println(d)                         // Animal(Рекс) — toString успадковано
+    println(c)                         // Cat(Мурка) → Animal(Мурка)
+}</code></pre>
+</div>
+
+<h2>Довідка</h2>
+
+<p><a href="../reference/0003-uspadkuvannya-data-class.html">«Успадкування, поліморфізм, data class — шпаргалка»</a> (уроки 7–9).</p>
+
+<footer class="lesson-footer">
+  <p>Щось незрозуміло або є питання по темі? Питайте у вашого викладача — це саме те, для чого він тут.</p>
+  <p><a href="0006-companion-object.html">← Попередній урок</a> · <a href="0008-polimorfizm.html">Наступний урок: Поліморфізм, is і smart cast →</a></p>
+</footer>
+
+</div>
+<script src="../../../assets/quiz.js"></script>
+</body>
+</html>
